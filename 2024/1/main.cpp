@@ -33,13 +33,14 @@ int solve_part_1(std::ifstream &stream) {
 int solve_part_2(std::ifstream &stream) {
 
     std::string line;
+    std::vector<int> first_list;
     std::unordered_map<int, int> count;
     while (std::getline(stream, line)) {
         size_t tab_pos = line.find("   ");
         int first_value = std::stoi(line.substr(0, tab_pos));
         int second_value = std::stoi(line.substr(tab_pos + 1));
 
-        std::cout << first_value << '\t'<< second_value << '\n';
+        first_list.push_back(first_value);
 
         if (count.find(first_value) == count.end()) {
             count[first_value] = 0;
@@ -52,13 +53,9 @@ int solve_part_2(std::ifstream &stream) {
         }
     }
 
-    std::cout << "---------" << '\n';
-
-    int cum_sum;
-    for (const auto &[key, value] : count) {
-        std::cout << key << '\t' << value << '\n';
-        cum_sum += key * value;
-        std::cout << cum_sum << '\n';
+    int cum_sum=0;
+    for (int i: first_list) {
+        cum_sum += count[i] * i;
     }
 
     return cum_sum;
