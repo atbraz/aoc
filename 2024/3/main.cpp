@@ -1,6 +1,7 @@
 
 #include <array>
 #include <cctype>
+#include <cstddef>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -22,68 +23,90 @@ std::vector<std::string> parse_input(std::string input_file) {
     return lines;
 }
 
+std::string do_dont_pos(size_t do_pos, size_t dont_pos) {
+    std::string do_str =
+        do_pos == std::string::npos ? "-" : std::to_string(do_pos);
+    std::string dont_str =
+        dont_pos == std::string::npos ? "-" : std::to_string(dont_pos);
+    return "\t\t| do() @ " + do_str + "\t| don't() @ " + dont_str + "\n";
+}
+
 std::vector<std::array<int, 2>> parse_line(std::string line, bool apply_cond) {
     bool enabled = true;
-    size_t curr_do_pos = 0;
-
     size_t curr_pos = 0;
     std::string mul_init = "mul(";
     std::vector<std::array<int, 2>> muls;
-    while (true) {
+    size_t last_control = std::string::npos;
+
+    while (curr_pos < line.length()) {
 
         size_t init_pos = line.find(mul_init, curr_pos);
 
         if (init_pos == std::string::npos) {
-            std::cout << "End of Line\n";
+            std::cout
+                << "\n\t------------------End of Line------------------\n";
             break;
         } else {
-            std::cout << "Found 'mul(' at pos " << init_pos << '\n';
             curr_pos = init_pos;
         }
 
         size_t do_pos = line.rfind("do()", curr_pos);
-        if (do_pos == std::string::npos) {
-            do_pos = 0;
-        }
-        std::cout << "Last 'do()' at pos " << do_pos << '\n';
-
         size_t dont_pos = line.rfind("don't()", curr_pos);
-        std::cout << "Last 'don't() at pos " << dont_pos << '\n';
 
-        if (dont_pos > do_pos) {
-            std::cout << "---->Disabled\n";
+        std::cout << curr_pos << "\t| mul(";
+        if (apply_cond) {
+            size_t last_do = std::string::npos;
+            size_t last_dont = std::string::npos;
+
+            if (do_pos < curr_pos) {
+                last_do = do_pos;
+            }
+            if (dont_pos < curr_pos) {
+                last_dont = dont_pos;
+            }
+
+            if (last_do != std::string::npos ||
+                last_dont != std::string::npos) {
+                enabled =
+                    (!(last_dont != std::string::npos &&
+                       (last_do == std::string::npos || last_dont > last_do)));
+            }
+        }
+
+        if (!enabled) {
+            std::cout << "\t\t--> Disabled\t" << do_dont_pos(do_pos, dont_pos);
+            curr_pos++;
             continue;
         };
 
         int curr_number = 0;
         std::array<int, 2> mul;
-        while (true) {
+        while (curr_pos < line.length()) {
             char next_char = line.at(mul_init.length() + ++curr_pos - 1);
             if (!((isdigit(next_char)) | (next_char == ',') |
                   (next_char == ')'))) {
-                std::cout << "\t-->Broke out of while on char " << next_char
-                          << " at pos" << curr_pos - 1 << '\n';
+                std::cout << next_char << "\t--> Broken\t"
+                          << do_dont_pos(do_pos, dont_pos);
                 break;
             };
 
             if (isdigit(next_char)) {
-                std::cout << "\tFound digit " << next_char << '\n';
+                std::cout << next_char;
                 int next_digit = next_char - '0';
                 curr_number = (curr_number * 10) + (next_digit);
                 continue;
             }
 
             if (next_char == ',') {
-                std::cout << "\tFound number delimiter ',', adding "
-                          << curr_number << " to arr\n";
+                std::cout << ',';
                 mul[0] = curr_number;
                 curr_number = 0;
                 continue;
             }
 
             if (next_char == ')') {
-                std::cout << "\t<--Found mul delimiter ')', pushing mul("
-                          << mul[0] << ',' << curr_number << ")' to vec\n";
+                std::cout << ")\t<-- pushing to vec"
+                          << do_dont_pos(do_pos, dont_pos);
                 mul[1] = curr_number;
                 muls.push_back(mul);
                 break;
@@ -99,7 +122,7 @@ std::vector<std::array<int, 2>> get_mul_vectors(std::vector<std::string> lines,
     std::vector<std::array<int, 2>> result;
 
     for (std::string line : lines) {
-        std::cout << "Parsing line\n\n" << line << "\n\n";
+        std::cout << "\n\nParsing line\n\n" << line << "\n\n";
         std::vector<std::array<int, 2>> parsed_line =
             parse_line(line, apply_cond);
         for (std::array<int, 2> arr : parsed_line) {
@@ -112,8 +135,11 @@ std::vector<std::array<int, 2>> get_mul_vectors(std::vector<std::string> lines,
 
 int mul_vector(std::vector<std::array<int, 2>> muls) {
     int result = 0;
+    std::cout << "\nMultiplications being summed:\n";
     for (std::array<int, 2> mul : muls) {
         result += (mul[0] * mul[1]);
+        std::cout << mul[0] << "\t*\t" << mul[1] << "\t=\t" << (mul[0] * mul[1])
+                  << "\t| Running total: " << result << "\n";
     }
     return result;
 }
@@ -124,14 +150,14 @@ int main() {
 
     std::vector<std::string> lines = parse_input(input_file);
 
-    std::cout << " -------------------------\n";
-    std::cout << " ------SOLVE PART 1-------\n";
-    std::cout << " -------------------------\n";
+    std::cout << "\n\t-------------------------\n";
+    std::cout << "\t------SOLVE PART 1-------\n";
+    std::cout << "\t-------------------------\n";
     int part_1 = mul_vector(get_mul_vectors(lines));
 
-    std::cout << " -------------------------\n";
-    std::cout << " ------SOLVE PART 2-------\n";
-    std::cout << " -------------------------\n";
+    std::cout << "\n\t-------------------------\n";
+    std::cout << "\t------SOLVE PART 2-------\n";
+    std::cout << "\t-------------------------\n";
     int part_2 = mul_vector(get_mul_vectors(lines, true));
 
     std::cout << "\nPart 1: " << part_1 << '\n';
