@@ -98,6 +98,54 @@ pub fn has_adjacent_number(grid: &[Vec<char>], symbol: &Symbol) -> Option<Number
 }
 
 #[must_use]
+pub fn find_all_adjacent_numbers(grid: &[Vec<char>], symbol: &Symbol) -> Vec<Number> {
+    let n_rows = grid.len();
+    let n_cols = grid[0].len();
+
+    let row_start = symbol.row.saturating_sub(1);
+    let row_end = (symbol.row + 1).min(n_rows - 1);
+
+    let mut adjacent_numbers = Vec::new();
+    let mut visited_positions = Vec::new();
+
+    (row_start..=row_end).for_each(|row| {
+        let col_start = symbol.col.saturating_sub(1);
+        let col_end = (symbol.col + 1).min(n_cols - 1);
+
+        for col in col_start..=col_end {
+            if !grid[row][col].is_ascii_digit() || visited_positions.contains(&(row, col)) {
+                continue;
+            }
+
+            let mut start_col = col;
+            while start_col > 0 && grid[row][start_col - 1].is_ascii_digit() {
+                start_col -= 1;
+            }
+
+            let mut end_col = col;
+            while end_col < n_cols - 1 && grid[row][end_col + 1].is_ascii_digit() {
+                end_col += 1;
+            }
+
+            for i in start_col..=end_col {
+                visited_positions.push((row, i));
+            }
+
+            let number_str: String = (start_col..=end_col).map(|i| grid[row][i]).collect();
+            let value = number_str.parse().unwrap();
+
+            adjacent_numbers.push(Number {
+                value,
+                row,
+                start_col,
+                end_col,
+            });
+        }
+    });
+    adjacent_numbers
+}
+
+#[must_use]
 pub fn read_numbers(grid: &[Vec<char>]) -> Vec<Number> {
     let mut numbers = Vec::new();
     let mut current_number = String::new();
@@ -224,7 +272,6 @@ pub fn print_colored_grid(
                 let num_str: String = (number.start_col..=number.end_col)
                     .map(|col| line[col])
                     .collect();
-
                 colored_line.push_str(&color.wrap(&num_str));
                 current_col = number.end_col + 1;
                 continue;
