@@ -1,4 +1,8 @@
 [workspace]
 name = "aoc"
-members = ["common/rust", "2023/3"]
+members = ["common/rust", "2023/3", "2023/4"]
 resolver = "2"
+
+[workspace.lints.clippy]
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
