@@ -1,22 +1,7 @@
+use crate::errors::InputError;
 use std::fs::{self, File};
-use std::io::{self, BufRead, BufReader};
+use std::io::{BufRead, BufReader};
 use std::path::Path;
-
-/**
-Represents errors that can occur when reading and parsing input files
-*/
-#[derive(Debug)]
-pub enum InputError {
-    IoError(io::Error),
-    EmptyFile,
-    InvalidFormat(String),
-}
-
-impl From<io::Error> for InputError {
-    fn from(error: io::Error) -> Self {
-        InputError::IoError(error)
-    }
-}
 
 /**
 A struct that provides different ways to read and parse input files

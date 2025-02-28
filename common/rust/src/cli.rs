@@ -1,6 +1,8 @@
 use crate::color::Color;
-use crate::input::InputError;
+use crate::errors::InputError;
 use std::env;
+use std::error::Error;
+use std::fmt::Display;
 use std::process;
 
 /**
@@ -15,12 +17,12 @@ Runs the specified solver with the given command-line arguments
 ```
 use aoc_common_rust::cli;
 
-fn part1_solver(filename: &str) -> Result<i32, aoc_common_rust::input::InputError> {
+fn part1_solver(filename: &str) -> Result<u32, aoc_common_rust::input::InputError> {
     // solution implementation
     Ok(42)
 }
 
-fn part2_solver(filename: &str) -> Result<i32, aoc_common_rust::input::InputError> {
+fn part2_solver(filename: &str) -> Result<u32, aoc_common_rust::input::InputError> {
     // solution implementation
     Ok(24)
 }
@@ -30,10 +32,12 @@ fn main() {
 }
 ```
 */
-pub fn run<F1, F2>(part_1: F1, part_2: F2)
+pub fn run<F1, F2, T, E>(part_1: F1, part_2: F2)
 where
-    F1: Fn(&str) -> Result<i32, InputError>,
-    F2: Fn(&str) -> Result<i32, InputError>,
+    F1: Fn(&str) -> Result<T, E>,
+    F2: Fn(&str) -> Result<T, E>,
+    T: Display,
+    E: Error + Display,
 {
     let args: Vec<String> = env::args().collect();
 
@@ -57,9 +61,18 @@ where
     };
 
     match result {
-        Ok(sum) => println!("Solution: {}", Color::Blue.wrap(&sum.to_string())),
+        Ok(answer) => println!("Solution: {}", Color::Blue.wrap(&answer.to_string())),
         Err(e) => {
-            eprintln!("Error: {e:#?}");
+            eprintln!("Error: {e}");
+
+            let mut source = e.source();
+            let mut level = 1;
+            while let Some(err) = source {
+                eprintln!("Caused by ({level}): {err}");
+                source = err.source();
+                level += 1;
+            }
+
             process::exit(1);
         }
     }
