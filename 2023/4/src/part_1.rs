@@ -1,7 +1,8 @@
 use crate::utils::parse_numbers;
-use aoc_common_rust::input::{InputError, InputReader};
+use aoc_common_rust::errors::AocError;
+use aoc_common_rust::input::InputReader;
 
-pub fn solve(filename: &str) -> Result<i32, InputError> {
+pub fn solve(filename: &str) -> Result<u32, AocError> {
     let lines = InputReader::as_lines(filename)?;
 
     let mut sum = 0;
@@ -13,7 +14,7 @@ pub fn solve(filename: &str) -> Result<i32, InputError> {
             .split_once('|')
             .expect("Missing separator between number sets");
 
-        let (winning_numbers, given_numbers): (Vec<i32>, Vec<i32>) =
+        let (winning_numbers, given_numbers): (Vec<u8>, Vec<u8>) =
             (parse_numbers(winning_part), parse_numbers(given_part));
 
         let matches = winning_numbers
@@ -22,7 +23,7 @@ pub fn solve(filename: &str) -> Result<i32, InputError> {
             .count();
 
         if matches > 0 {
-            sum += 2_i32.pow(matches as u32 - 1);
+            sum += 2_u32.pow(matches as u32 - 1);
         }
     }
     Ok(sum)
