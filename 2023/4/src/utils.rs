@@ -39,7 +39,7 @@ pub(crate) struct Card {
     id: u8,
     winning: [u8; 10],
     attempt: [u8; 25],
-    pub(crate) copies: u8,
+    pub(crate) copies: u32,
 }
 
 impl Card {
@@ -61,16 +61,7 @@ impl Card {
             .unwrap()
     }
 
-    pub fn points(&self) -> u32 {
-        let matches = self.count_matches();
-        if matches > 0 {
-            2_u32.pow(u32::from(matches - 1))
-        } else {
-            0
-        }
-    }
-
-    pub(crate) fn add_copies(&mut self, n: u8) {
+    pub(crate) fn add_copies(&mut self, n: u32) {
         self.copies += n;
     }
 }
