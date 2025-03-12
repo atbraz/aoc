@@ -13,10 +13,8 @@ impl Range {
         self.start + self.length - 1
     }
 }
-
 // NOTE: this was done by claude, im not even going to lie
-// my implementation was way to slow to even finish in a reasonable time
-// so im just going to leave this version here
+// my implementation was wayy to slow
 
 // Apply a single mapping rule to a range, returning transformed and unchanged portions
 fn apply_mapping_rule(range: &Range, mapping: &RangeMapping) -> (Option<Range>, Vec<Range>) {
