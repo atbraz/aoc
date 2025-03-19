@@ -4,12 +4,18 @@ use std::io;
 use std::num::{ParseFloatError, ParseIntError};
 
 /**
-Represents errors that can occur when reading and parsing input files
+Represents errors that can occur when reading and parsing input files.
+
+This error type is used by `InputReader` methods for specific I/O and parsing errors
+at the input reading level. It's often converted to `AocError` by higher-level functions.
 */
 #[derive(Debug)]
 pub enum InputError {
+    /// An I/O error occurred when reading a file.
     IoError(io::Error),
+    /// The file exists but is empty.
     EmptyFile,
+    /// The file content doesn't match the expected format.
     InvalidFormat(String),
 }
 
@@ -38,12 +44,24 @@ impl From<io::Error> for InputError {
     }
 }
 
+/**
+A general error type for Advent of Code solutions.
+
+This error type is used by solver functions and represents all possible errors
+that can occur during puzzle solution. It wraps more specific error types and
+provides conversions from common error types.
+*/
 #[derive(Debug)]
 pub enum AocError {
+    /// An error that occurred when reading or parsing input files.
     Input(InputError),
+    /// A general parsing error with a message.
     Parse(String),
+    /// An error that occurred when parsing integers.
     ParseInt(ParseIntError),
+    /// An error that occurred when parsing floating-point numbers.
     ParseFloat(ParseFloatError),
+    /// A custom error with a message.
     Custom(String),
 }
 
@@ -100,6 +118,21 @@ impl From<ParseFloatError> for AocError {
     }
 }
 
+/**
+Creates a new custom error with the given message.
+
+This is a convenience function for creating an `AocError::Custom`.
+
+# Examples
+
+```
+use aoc_common_rust::errors::custom_error;
+
+let err = custom_error("Something went wrong");
+// Use this error in a Result
+let result: Result<(), _> = Err(err);
+```
+*/
 pub fn custom_error<S: Into<String>>(msg: S) -> AocError {
     AocError::Custom(msg.into())
 }

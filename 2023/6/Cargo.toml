@@ -1,0 +1,10 @@
+[package]
+name = "aoc-2023-6"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aoc-common-rust = { version = "0.1.0", path = "../../common/rust" }
+
+[lints]
+workspace = true

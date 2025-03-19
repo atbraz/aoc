@@ -1,10 +1,8 @@
 use crate::color::Color;
-use crate::errors::InputError;
 use std::env;
 use std::error::Error;
 use std::fmt::Display;
 use std::process;
-
 /**
 Runs the specified solver with the given command-line arguments
 
@@ -17,12 +15,12 @@ Runs the specified solver with the given command-line arguments
 ```
 use aoc_common_rust::cli;
 
-fn part1_solver(filename: &str) -> Result<u32, aoc_common_rust::input::InputError> {
+fn part1_solver(filename: &str) -> Result<u32, AocError> {
     // solution implementation
     Ok(42)
 }
 
-fn part2_solver(filename: &str) -> Result<u32, aoc_common_rust::input::InputError> {
+fn part2_solver(filename: &str) -> Result<u32, AocError> {
     // solution implementation
     Ok(24)
 }

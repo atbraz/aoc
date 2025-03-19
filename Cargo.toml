@@ -1,8 +1,10 @@
 [workspace]
 name = "aoc"
-members = ["common/rust", "2023/3", "2023/4"]
+members = ["common/rust", "2023/3", "2023/4", "2023/5", "2023/6"]
 resolver = "2"
 
 [workspace.lints.clippy]
+all = "warn"
+pedantic = "warn"
 missing_errors_doc = "allow"
 missing_panics_doc = "allow"
