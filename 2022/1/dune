@@ -1,0 +1,5 @@
+(executable
+ (name main)
+ (public_name aoc-2022-1)
+ (package aoc-2022)
+ (libraries aoc-common))
