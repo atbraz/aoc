@@ -1,16 +1,17 @@
-# dune run
+# dune exec aoc-2022-1
 # OCAMLPARAM: unset
 # Shared cache: enabled-except-user-rules
 # Shared cache location: /home/abraz/.cache/dune/db
 # Workspace root: /home/abraz/dev/misc/aoc
 # Auto-detected concurrency: 8
+$ /usr/bin/opam --version --color=never > /tmp/dune_691ac7_output
+$ /usr/bin/opam config env --switch aoc --sexp --set-switch > /tmp/dune_8c2b31_output
 # Dune context:
-#  { name = "default"
-#  ; kind = "default"
+#  { name = "aoc"
+#  ; kind = { root = None; switch = "aoc" }
 #  ; profile = Dev
-#  ; merlin = true
+#  ; merlin = false
 #  ; fdo_target_exe = None
-#  ; build_dir = In_build_dir "default"
+#  ; build_dir = In_build_dir "aoc"
 #  ; instrument_with = []
 #  }
-$ /home/abraz/.opam/default/bin/ocamlc.opt -config > /tmp/dune_0692c7_output
