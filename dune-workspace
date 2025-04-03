@@ -1,2 +1,2 @@
 (lang dune 3.17)
-(context (opam (switch aoc)))
+(context default)

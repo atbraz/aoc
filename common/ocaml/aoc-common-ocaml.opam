@@ -1,5 +1,5 @@
 opam-version: "2.0"
-name: "aoc-common"
+name: "aoc-common-ocaml"
 version: "1.0.0"
 synopsis: "Common utilities for Advent of Code solutions"
 maintainer: "Antonio Braz <antonio@torreaobraz.com>"

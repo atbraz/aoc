@@ -1,3 +1,5 @@
 (library
- (name aoc_common)
- (public_name aoc-common))
+ (name aoc_common_ocaml)
+ (public_name aoc-common-ocaml)
+ (modules aoc_common_ocaml)
+ (libraries))

@@ -1,8 +1,8 @@
 (lang dune 3.17)
-(name aoc-common)
+(name aoc-common-ocaml)
 (version 1.0.0)
 
 (package
- (name aoc-common)
+ (name aoc-common-ocaml)
  (synopsis "Common utilities for Advent of Code solutions")
  (depends ocaml dune))

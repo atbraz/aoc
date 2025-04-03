@@ -5,4 +5,4 @@
 (package
  (name aoc-2022)
  (synopsis "Advent of Code 2022 solutions")
- (depends ocaml dune aoc-common))
+ (depends ocaml dune))
