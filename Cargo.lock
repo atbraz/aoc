@@ -31,5 +31,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "aoc-2023-7"
+version = "0.1.0"
+dependencies = [
+ "aoc-common-rust",
+]
+
+[[package]]
+name = "aoc-2023-8"
+version = "0.1.0"
+dependencies = [
+ "aoc-common-rust",
+]
+
+[[package]]
 name = "aoc-common-rust"
 version = "0.1.0"
