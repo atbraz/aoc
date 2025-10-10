@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/antonio/Documents/dev/aoc/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

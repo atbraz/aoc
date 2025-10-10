@@ -1,5 +1,8 @@
 use aoc_common_rust::errors::AocError;
 
-pub fn solve(filename: &str) -> Result<u32, AocError> {
-    Ok(42)
+use crate::utils;
+
+pub fn solve(filename: &str) -> Result<u64, AocError> {
+    let (instructions, graph) = utils::parse_input(filename)?;
+    Ok(utils::get_n_steps_2_spooky_boogaloo(instructions, graph))
 }
