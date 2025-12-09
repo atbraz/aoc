@@ -1,0 +1,156 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  # Rust (2023)
+  rust-check:
+    name: Rust - Check, Test, Lint
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            . -> target
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Run clippy
+        run: cargo clippy --workspace -- -D warnings
+
+      - name: Build all Rust packages
+        run: cargo build --workspace --verbose
+
+      - name: Install nextest
+        uses: taiki-e/install-action@nextest
+
+      - name: Run tests
+        run: cargo nextest run --workspace --no-fail-fast
+
+  # OCaml (2022)
+  ocaml-check:
+    name: OCaml - Build and Format
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up OCaml
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: 5.3.x
+          dune-cache: true
+
+      - name: Install dependencies
+        run: |
+          opam install . --deps-only --with-test -y
+        working-directory: 2022
+
+      - name: Check OCaml formatting
+        run: |
+          opam exec -- dune build @fmt
+        working-directory: 2022
+        continue-on-error: true
+
+      - name: Build OCaml solutions
+        run: |
+          opam exec -- dune build
+        working-directory: 2022
+
+  # C++ (2024)
+  cpp-check:
+    name: C++ - Build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install g++
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ build-essential
+
+      - name: Build C++ solutions
+        run: |
+          for day in */; do
+            day_num=${day%/}
+            if [ -f "$day_num/main.cpp" ]; then
+              echo "Building day $day_num..."
+              g++ -std=c++17 -Wall -Wextra -O2 \
+                -I../common/cpp/include \
+                "$day_num/main.cpp" \
+                ../common/cpp/src/aoc_common.cpp \
+                -o "$day_num/day_$day_num" || echo "Failed to build day $day_num"
+            fi
+          done
+        working-directory: 2024
+
+  # EditorConfig validation
+  editorconfig:
+    name: Validate EditorConfig
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check EditorConfig
+        uses: editorconfig-checker/action-editorconfig-checker@main
+
+  # Progress check
+  progress:
+    name: Show Progress
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Just
+        uses: extractions/setup-just@v2
+
+      - name: Show progress
+        run: |
+          chmod +x scripts/progress.sh
+          scripts/progress.sh
+
+  # All checks passed
+  ci-success:
+    name: All CI Checks Passed
+    runs-on: ubuntu-latest
+    needs: [rust-check, ocaml-check, cpp-check, editorconfig]
+    if: always()
+
+    steps:
+      - name: Check all jobs
+        run: |
+          if [ "${{ needs.rust-check.result }}" != "success" ] || \
+             [ "${{ needs.ocaml-check.result }}" != "success" ] || \
+             [ "${{ needs.cpp-check.result }}" != "success" ] || \
+             [ "${{ needs.editorconfig.result }}" != "success" ]; then
+            echo "Some CI checks failed"
+            exit 1
+          fi
+          echo "All CI checks passed!"
