@@ -166,6 +166,12 @@ bin/
 day_*
 *.exe
 
+# Zig compiled binaries
+*/main
+*.o
+zig-cache/
+zig-out/
+
 # Added by cargo
 
 /target
