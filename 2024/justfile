@@ -1,0 +1,159 @@
+# Advent of Code 2024 - Justfile
+# Usage:
+#   just --list           - Show all available commands
+#   just build 1          - Compile day 1
+#   just run 1            - Compile and run day 1 with input file
+#   just test 1           - Compile and run day 1 with sample input
+#   just new 5            - Create new day 5 solution
+#   just clean            - Remove all compiled binaries
+#   just clean 1          - Remove compiled binary for day 1
+
+CXX := "g++"
+CXXFLAGS := "-std=c++17 -Wall -Wextra -O2"
+DAYS := "1 2 3 4"
+
+# Default - show available commands
+default:
+    @just --list
+
+# Compile a specific day
+[group('build')]
+build day:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo -e "\033[0;32mCompiling day {{day}}...\033[0m"
+    {{CXX}} {{CXXFLAGS}} {{day}}/main.cpp -o {{day}}/day_{{day}}
+
+# Compile all days
+[group('build')]
+build-all:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for day in {{DAYS}}; do
+        echo -e "\033[0;32mCompiling day $day...\033[0m"
+        {{CXX}} {{CXXFLAGS}} $day/main.cpp -o $day/day_$day
+    done
+
+# Compile and run a specific day with input file
+[group('run')]
+run day:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    just build {{day}}
+    echo -e "\033[0;32mRunning day {{day}} with input...\033[0m"
+    echo ""
+    echo "{{day}}/input" | ./{{day}}/day_{{day}}
+
+# Compile and run a specific day with sample input
+[group('test')]
+test day sample="sample_1":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    just build {{day}}
+    echo -e "\033[0;32mRunning day {{day}} with {{sample}}...\033[0m"
+    echo ""
+    echo "{{day}}/{{sample}}" | ./{{day}}/day_{{day}}
+
+# Create a new day solution
+[group('setup')]
+new day:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    if [ -d "{{day}}" ]; then
+        echo "Error: Day {{day}} already exists!"
+        exit 1
+    fi
+
+    echo "Creating directory for day {{day}}..."
+    mkdir -p "{{day}}"
+
+    # Create main.cpp template
+    cat > "{{day}}/main.cpp" << 'EOF'
+    #include <fstream>
+    #include <iostream>
+    #include <string>
+    #include <vector>
+
+    std::vector<std::string> parse_input(std::string input_file) {
+        std::ifstream stream{input_file};
+
+        if (!stream) {
+            std::cerr << "Error: Cannot open input file\n";
+            return {};
+        }
+
+        std::string line;
+        std::vector<std::string> lines;
+        while (std::getline(stream, line)) {
+            lines.push_back(line);
+        }
+
+        return lines;
+    }
+
+    int solve_part_1(const std::vector<std::string>& lines) {
+        // TODO: Implement part 1 solution
+        return 0;
+    }
+
+    int solve_part_2(const std::vector<std::string>& lines) {
+        // TODO: Implement part 2 solution
+        return 0;
+    }
+
+    int main() {
+        std::string input_file;
+        std::cin >> input_file;
+
+        std::vector<std::string> lines = parse_input(input_file);
+
+        std::cout << "Part 1: " << solve_part_1(lines) << '\n';
+        std::cout << "Part 2: " << solve_part_2(lines) << '\n';
+
+        return 0;
+    }
+    EOF
+
+    # Create empty input files
+    echo "Creating input files..."
+    touch "{{day}}/input"
+    touch "{{day}}/sample_1"
+
+    # Create a simple justfile by copying from day 1 template
+    if [ -f "1/justfile" ]; then
+        cp "1/justfile" "{{day}}/justfile"
+        perl '-pi' '-e' "s/DAY := \"1\"/DAY := \"{{day}}\"/g" "{{day}}/justfile"
+        perl '-pi' '-e' "s/# Day 1/# Day {{day}}/g" "{{day}}/justfile"
+    fi
+
+    echo ""
+    echo "✓ Successfully created day {{day}}!"
+    echo ""
+    echo "Next steps:"
+    echo "  1. Add your puzzle input to {{day}}/input"
+    echo "  2. Add sample input to {{day}}/sample_1"
+    echo "  3. Implement your solution in {{day}}/main.cpp"
+    echo "  4. Test with: just test {{day}}"
+    echo "  5. Run with: just run {{day}}"
+
+# Clean all compiled binaries
+[group('clean')]
+clean day="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ -n "{{day}}" ]; then
+        echo -e "\033[0;33mCleaning day {{day}}...\033[0m"
+        rm -f {{day}}/day_{{day}}
+    else
+        echo -e "\033[0;33mCleaning all compiled binaries...\033[0m"
+        rm -f */day_*
+    fi
+
+# Update C++ toolchain (Homebrew)
+[group('update')]
+update:
+    @echo "Updating C++ toolchain via Homebrew..."
+    @brew update
+    @brew upgrade gcc || true
+    @{{CXX}} --version

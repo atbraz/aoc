@@ -1,0 +1,36 @@
+# Day 2 - Justfile
+
+CXX := "g++"
+CXXFLAGS := "-std=c++17 -Wall -Wextra -O2"
+DAY := "2"
+BINARY := "day_" + DAY
+
+# Default - show commands
+default:
+    @just --list
+
+# Compile the solution
+[group('build')]
+build:
+    @echo -e "\033[0;32mCompiling day {{DAY}}...\033[0m"
+    {{CXX}} {{CXXFLAGS}} main.cpp -o {{BINARY}}
+
+# Run with input file
+[group('run')]
+run: build
+    @echo -e "\033[0;32mRunning day {{DAY}} with input...\033[0m"
+    @echo ""
+    @echo "input" | ./{{BINARY}}
+
+# Run with sample file
+[group('test')]
+test sample="sample_1": build
+    @echo -e "\033[0;32mRunning day {{DAY}} with {{sample}}...\033[0m"
+    @echo ""
+    @echo "{{sample}}" | ./{{BINARY}}
+
+# Clean compiled binary
+[group('clean')]
+clean:
+    @echo -e "\033[0;33mCleaning day {{DAY}}...\033[0m"
+    @rm -f {{BINARY}}
