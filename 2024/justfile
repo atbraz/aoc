@@ -8,13 +8,50 @@
 #   just clean            - Remove all compiled binaries
 #   just clean 1          - Remove compiled binary for day 1
 
-CXX := "g++"
-CXXFLAGS := "-std=c++17 -Wall -Wextra -O2"
+# Auto-detect compiler based on platform
+CXX := if os() == "macos" {
+    "clang++"
+} else if `command -v g++ >/dev/null 2>&1 && echo 1 || echo 0` == "1" {
+    "g++"
+} else {
+    "clang++"
+}
+
+# Auto-detect best C++ standard
+# Modern compilers (Clang 12+, GCC 11+, Apple Clang 14+) support C++20
+CXXSTD := if os() == "macos" { "c++20" } else { "c++17" }
+
+# Platform-specific optimization flags
+OPTFLAGS := if os() == "macos" {
+    if arch() == "aarch64" {
+        "-O2 -mcpu=apple-m1"
+    } else {
+        "-O2 -march=native"
+    }
+} else {
+    "-O2 -march=native"
+}
+
+CXXFLAGS := "-std=" + CXXSTD + " -Wall -Wextra " + OPTFLAGS
 DAYS := "1 2 3 4"
 
 # Default - show available commands
 default:
     @just --list
+
+# Show detected compiler and build configuration
+[group('info')]
+info:
+    #!/usr/bin/env bash
+    echo -e "\033[0;36m=== Build Configuration ===\033[0m"
+    echo "OS:           $(uname -s)"
+    echo "Architecture: $(uname -m)"
+    echo "Compiler:     {{CXX}}"
+    echo "C++ Standard: {{CXXSTD}}"
+    echo "Flags:        {{CXXFLAGS}}"
+    echo ""
+    echo -e "\033[0;36m=== Compiler Version ===\033[0m"
+    {{CXX}} --version
 
 # Compile a specific day
 [group('build')]
@@ -150,10 +187,23 @@ clean day="":
         rm -f */day_*
     fi
 
-# Update C++ toolchain (Homebrew)
+# Update C++ toolchain
 [group('update')]
 update:
-    @echo "Updating C++ toolchain via Homebrew..."
-    @brew update
-    @brew upgrade gcc || true
-    @{{CXX}} --version
+    #!/usr/bin/env bash
+    echo -e "\033[0;36mChecking for toolchain updates...\033[0m"
+    if [[ "{{os()}}" == "macos" ]]; then
+        echo "On macOS, clang++ is provided by Xcode Command Line Tools."
+        echo "To update, run: softwareupdate --list"
+        echo ""
+        echo "Current version:"
+        {{CXX}} --version
+    elif command -v apt-get >/dev/null 2>&1; then
+        echo "Updating via apt-get..."
+        sudo apt-get update && sudo apt-get upgrade -y g++ || true
+    elif command -v brew >/dev/null 2>&1; then
+        echo "Updating via Homebrew..."
+        brew update && brew upgrade gcc || true
+    else
+        echo "No package manager detected. Please update manually."
+    fi
