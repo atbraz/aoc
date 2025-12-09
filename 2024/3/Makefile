@@ -1,13 +1,13 @@
-# Makefile for Day 4
+# Makefile for Day 3
 # Usage:
 #   make        - Compile the solution
 #   make run    - Compile and run with input file
 #   make test   - Compile and run with sample input
 #   make clean  - Remove compiled binary
 
-CXX = clang-21
-CXXFLAGS = -std=c++26 -Wall -Wextra -O2
-DAY = 4
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2
+DAY = 3
 BINARY = day_$(DAY)
 
 # Colors for output
@@ -20,9 +20,9 @@ NC = \033[0m # No Color
 # Default target - compile
 all: $(BINARY)
 
-$(BINARY): main.cpp ../cpp_utils/parse_input.cpp
+$(BINARY): main.cpp
 	@echo "$(GREEN)Compiling day $(DAY)...$(NC)"
-	@$(CXX) $(CXXFLAGS) main.cpp ../cpp_utils/parse_input.cpp -o $(BINARY)
+	@$(CXX) $(CXXFLAGS) main.cpp -o $(BINARY)
 
 # Run with input file
 run: $(BINARY)
