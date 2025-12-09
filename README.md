@@ -6,13 +6,14 @@ Multi-year Advent of Code solutions exploring different programming languages an
 
 ```
 aoc/
+├── 2025/          # Zig solutions
 ├── 2024/          # C++ solutions
 ├── 2023/          # Rust solutions
 ├── 2022/          # OCaml solutions
 ├── common/        # Shared utilities per language
 │   ├── rust/      # Rust common library
 │   ├── ocaml/     # OCaml common library
-│   └── cpp/       # C++ common library (coming soon)
+│   └── cpp/       # C++ common library
 ├── justfile       # Root task runner
 └── scripts/       # Meta-project utilities
 ```
@@ -37,11 +38,13 @@ just --list
 
 | Year | Language | Build Tool | Paradigm |
 |------|----------|------------|----------|
+| 2025 | Zig 0.13 | zig | Systems, imperative |
 | 2024 | C++17 | g++ | Imperative, OOP |
 | 2023 | Rust | Cargo | Systems, functional-ish |
 | 2022 | OCaml | Dune/opam | Functional |
 
 Each year explores different strengths:
+- **Zig**: Simplicity, explicit control, fast compile times, comptime
 - **C++**: Performance, low-level control, STL algorithms
 - **Rust**: Memory safety, zero-cost abstractions, strong type system
 - **OCaml**: Pattern matching, immutability, algebraic types
@@ -50,6 +53,7 @@ Each year explores different strengths:
 
 Each year has its own README with detailed setup and workflow:
 
+- [2025 README](2025/README.md) - Zig setup and memory management
 - [2024 README](2024/README.md) - C++ setup and commands
 - [2023 README](2023/README.md) - Rust workspace structure
 - [2022 README](2022/README.md) - OCaml/Dune configuration
@@ -158,18 +162,24 @@ See [NEW_YEAR.md](NEW_YEAR.md) for a guide on setting up a new year (2025, etc.)
 - [Just](https://github.com/casey/just) - Task runner
 - Git - Version control
 
+### 2025 (Zig)
+- Zig ≥ 0.13.0
+- Install: `just 2025/install-toolchain` or download from [ziglang.org](https://ziglang.org/download/)
+
 ### 2024 (C++)
 - g++ with C++17 support
-- Installed via Homebrew on macOS: `brew install gcc`
+- Install: `just 2024/install-toolchain` or `brew install gcc` (macOS)
 
 ### 2023 (Rust)
 - Rust toolchain (specified in rust-toolchain.toml)
 - cargo-nextest: `cargo install cargo-nextest`
+- Install: `just 2023/install-toolchain`
 
 ### 2022 (OCaml)
 - OCaml ≥ 5.3.0
 - opam - Package manager
-- Dune ≥ 3.17.0: `opam install dune`
+- Dune ≥ 3.17.0
+- Install: `just 2022/install-toolchain`
 
 ## Configuration
 
