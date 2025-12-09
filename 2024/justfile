@@ -1,12 +1,13 @@
-# Advent of Code 2024 - Justfile
+# Advent of Code 2024 - Justfile (C++)
 # Usage:
-#   just --list           - Show all available commands
-#   just build 1          - Compile day 1
-#   just run 1            - Compile and run day 1 with input file
-#   just test 1           - Compile and run day 1 with sample input
-#   just new 5            - Create new day 5 solution
-#   just clean            - Remove all compiled binaries
-#   just clean 1          - Remove compiled binary for day 1
+#   just --list              - Show all available commands
+#   just install-toolchain   - Install C++ compiler (g++ or clang++)
+#   just build 1             - Compile day 1
+#   just run 1               - Compile and run day 1 with input file
+#   just test 1              - Compile and run day 1 with sample input
+#   just new 5               - Create new day 5 solution
+#   just clean               - Remove all compiled binaries
+#   just clean 1             - Remove compiled binary for day 1
 
 # Auto-detect compiler based on platform
 CXX := if os() == "macos" {
@@ -207,3 +208,61 @@ update:
     else
         echo "No package manager detected. Please update manually."
     fi
+
+# Install C++ toolchain if not present
+[group('setup')]
+install-toolchain:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Checking C++ toolchain installation..."
+    echo ""
+
+    # Detect OS
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS - check for Xcode Command Line Tools
+        if ! command -v clang++ &> /dev/null; then
+            echo "Installing Xcode Command Line Tools..."
+            xcode-select --install
+            echo ""
+            echo "Please complete the installation in the dialog that appeared,"
+            echo "then run this command again."
+            exit 1
+        else
+            echo "✓ clang++ already installed (via Xcode Command Line Tools)"
+        fi
+        COMPILER="clang++"
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        # Linux - install g++
+        if ! command -v g++ &> /dev/null; then
+            echo "Installing g++..."
+            if command -v apt-get &> /dev/null; then
+                sudo apt-get update
+                sudo apt-get install -y build-essential g++
+            elif command -v dnf &> /dev/null; then
+                sudo dnf install -y gcc-c++
+            elif command -v pacman &> /dev/null; then
+                sudo pacman -S --noconfirm gcc
+            else
+                echo "Error: Unsupported package manager"
+                echo "Please install g++ manually"
+                exit 1
+            fi
+            echo "✓ g++ installed"
+        else
+            echo "✓ g++ already installed"
+        fi
+        COMPILER="g++"
+    else
+        echo "Error: Unsupported OS"
+        exit 1
+    fi
+
+    echo ""
+    echo "C++ toolchain setup complete!"
+    echo ""
+    echo "Compiler version:"
+    $COMPILER --version | head -n1
+    echo ""
+    echo "Testing C++17 support..."
+    echo 'int main() { auto x = 42; return 0; }' | $COMPILER -std=c++17 -x c++ - -o /tmp/test_cpp17 && echo "✓ C++17 supported" && rm /tmp/test_cpp17

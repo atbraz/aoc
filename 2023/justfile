@@ -1,12 +1,13 @@
 # Advent of Code 2023 - Justfile (Rust)
 # Usage:
-#   just --list           - Show all available commands
-#   just run 8            - Run day 8 with input file (part 1)
-#   just run 8 2          - Run day 8 with input file (part 2)
-#   just test 8           - Run day 8 with sample input (part 1)
-#   just test 8 2 sample_2 - Run day 8 with sample_2 (part 2)
-#   just new 11           - Create new day 11 solution
-#   just clean            - Clean all build artifacts
+#   just --list              - Show all available commands
+#   just install-toolchain   - Install Rust via rustup and cargo-nextest
+#   just run 8               - Run day 8 with input file (part 1)
+#   just run 8 2             - Run day 8 with input file (part 2)
+#   just test 8              - Run day 8 with sample input (part 1)
+#   just test 8 2 sample_2   - Run day 8 with sample_2 (part 2)
+#   just new 11              - Create new day 11 solution
+#   just clean               - Clean all build artifacts
 
 YEAR := "2023"
 
@@ -130,3 +131,41 @@ update-toolchain:
     rustup update
     @rustc --version
     @cargo --version
+
+# Install Rust toolchain if not present
+[group('setup')]
+install-toolchain:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Checking Rust toolchain installation..."
+    echo ""
+
+    # Install rustup if not present
+    if ! command -v rustup &> /dev/null; then
+        echo "Installing Rust via rustup..."
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        source "$HOME/.cargo/env"
+        echo "✓ Rust installed"
+    else
+        echo "✓ rustup already installed"
+    fi
+
+    # Install cargo-nextest if not present
+    if ! command -v cargo-nextest &> /dev/null; then
+        echo "Installing cargo-nextest..."
+        cargo install cargo-nextest --locked
+        echo "✓ cargo-nextest installed"
+    else
+        echo "✓ cargo-nextest already installed"
+    fi
+
+    echo ""
+    echo "Rust toolchain setup complete!"
+    echo ""
+    echo "Versions:"
+    echo "  rustc:  $(rustc --version)"
+    echo "  cargo:  $(cargo --version)"
+    echo "  nextest: $(cargo nextest --version | head -n1)"
+    echo ""
+    echo "To use Rust in this shell, run: source \$HOME/.cargo/env"

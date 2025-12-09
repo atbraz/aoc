@@ -1,10 +1,11 @@
 # Advent of Code - Root Justfile
 # Usage:
-#   just --list              - Show all available commands
-#   just 2024 1              - Run 2024 day 1 with input
-#   just test 2024 1         - Run 2024 day 1 with sample input
-#   just 2023 8              - Run 2023 day 8 with input
-#   just new 2024 5          - Create new day 5 solution for 2024
+#   just --list                  - Show all available commands
+#   just run 2024 1              - Run 2024 day 1 with input
+#   just test 2024 1             - Run 2024 day 1 with sample input
+#   just new 2024 5              - Create new day 5 solution for 2024
+#   just install-toolchain 2023  - Install Rust toolchain for 2023
+#   just install-all-toolchains  - Install all toolchains (C++, Rust, OCaml)
 
 # Default recipe - show help
 default:
@@ -55,6 +56,30 @@ update year:
 [group('update')]
 update-rust:
     @just 2023/update-toolchain
+
+# Install toolchain for a specific year
+[group('setup')]
+install-toolchain year:
+    @just {{year}}/install-toolchain
+
+# Install all toolchains (OCaml, Rust, C++)
+[group('setup')]
+install-all-toolchains:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Installing all toolchains..."
+    echo ""
+    echo "=== Installing C++ toolchain (2024) ==="
+    just 2024/install-toolchain || true
+    echo ""
+    echo "=== Installing Rust toolchain (2023) ==="
+    just 2023/install-toolchain || true
+    echo ""
+    echo "=== Installing OCaml toolchain (2022) ==="
+    just 2022/install-toolchain || true
+    echo ""
+    echo "All toolchain installations attempted!"
+    echo "Run 'just --list' to see available commands."
 
 # Show progress for all years or a specific year
 [group('utils')]

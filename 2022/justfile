@@ -1,11 +1,12 @@
 # Advent of Code 2022 - Justfile (OCaml)
 # Usage:
-#   just --list           - Show all available commands
-#   just run 1            - Build and run day 1 with input file
-#   just test 1           - Build and run day 1 with sample input
-#   just build 1          - Build day 1
-#   just new 5            - Create new day 5 solution
-#   just clean            - Clean all build artifacts
+#   just --list              - Show all available commands
+#   just install-toolchain   - Install OCaml, opam, and dune
+#   just run 1               - Build and run day 1 with input file
+#   just test 1              - Build and run day 1 with sample input
+#   just build 1             - Build day 1
+#   just new 5               - Create new day 5 solution
+#   just clean               - Clean all build artifacts
 
 YEAR := "2022"
 
@@ -161,3 +162,90 @@ update-toolchain:
     @echo ""
     @ocaml --version
     @dune --version
+
+# Install OCaml toolchain if not present
+[group('setup')]
+install-toolchain:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Checking OCaml toolchain installation..."
+    echo ""
+
+    # Detect OS
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        PKG_MANAGER="brew"
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        if command -v apt-get &> /dev/null; then
+            PKG_MANAGER="apt"
+        elif command -v dnf &> /dev/null; then
+            PKG_MANAGER="dnf"
+        elif command -v pacman &> /dev/null; then
+            PKG_MANAGER="pacman"
+        else
+            echo "Error: Unsupported package manager"
+            exit 1
+        fi
+    else
+        echo "Error: Unsupported OS"
+        exit 1
+    fi
+
+    # Install opam if not present
+    if ! command -v opam &> /dev/null; then
+        echo "Installing opam..."
+        case $PKG_MANAGER in
+            brew)
+                brew install opam
+                ;;
+            apt)
+                sudo apt-get update
+                sudo apt-get install -y opam
+                ;;
+            dnf)
+                sudo dnf install -y opam
+                ;;
+            pacman)
+                sudo pacman -S --noconfirm opam
+                ;;
+        esac
+    else
+        echo "✓ opam already installed"
+    fi
+
+    # Initialize opam if needed
+    if [ ! -d "$HOME/.opam" ]; then
+        echo "Initializing opam..."
+        opam init -y
+        eval $(opam env)
+    else
+        echo "✓ opam already initialized"
+    fi
+
+    # Install OCaml if needed
+    if ! command -v ocaml &> /dev/null; then
+        echo "Installing OCaml 5.3.0..."
+        opam switch create 5.3.0 -y
+        eval $(opam env)
+    else
+        echo "✓ OCaml already installed ($(ocaml --version | head -n1))"
+    fi
+
+    # Install dune if not present
+    if ! command -v dune &> /dev/null; then
+        echo "Installing dune..."
+        opam install dune -y
+        eval $(opam env)
+    else
+        echo "✓ dune already installed ($(dune --version))"
+    fi
+
+    echo ""
+    echo "OCaml toolchain setup complete!"
+    echo ""
+    echo "Versions:"
+    echo "  opam:  $(opam --version)"
+    echo "  OCaml: $(ocaml --version | head -n1)"
+    echo "  dune:  $(dune --version)"
+    echo ""
+    echo "Don't forget to run: eval \$(opam env)"
