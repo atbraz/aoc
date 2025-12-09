@@ -1,0 +1,102 @@
+# EditorConfig for Advent of Code multi-language project
+# https://editorconfig.org
+
+root = true
+
+# Default settings for all files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Rust files (2023)
+[*.rs]
+indent_style = space
+indent_size = 4
+
+[Cargo.toml]
+indent_style = space
+indent_size = 2
+
+# OCaml files (2022)
+[*.{ml,mli}]
+indent_style = space
+indent_size = 2
+
+[*.opam]
+indent_style = space
+indent_size = 2
+
+[dune]
+indent_style = space
+indent_size = 1
+
+[dune-project]
+indent_style = space
+indent_size = 1
+
+# C++ files (2024)
+[*.{cpp,hpp,h,cc,cxx}]
+indent_style = space
+indent_size = 4
+
+# Justfiles
+[justfile]
+indent_style = space
+indent_size = 4
+
+[{Justfile,*.just}]
+indent_style = space
+indent_size = 4
+
+# Markdown files
+[*.md]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = false  # Allow trailing spaces for line breaks
+
+# YAML files (CI/CD)
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# JSON files
+[*.json]
+indent_style = space
+indent_size = 2
+
+# Shell scripts
+[*.{sh,bash}]
+indent_style = space
+indent_size = 2
+
+# TOML files
+[*.toml]
+indent_style = space
+indent_size = 2
+
+# Makefile (if any)
+[{Makefile,*.mk}]
+indent_style = tab
+indent_size = 4
+
+# Git files
+[.gitignore]
+indent_style = space
+indent_size = 2
+
+[.gitattributes]
+indent_style = space
+indent_size = 2
+
+# Python (if needed for scripts)
+[*.py]
+indent_style = space
+indent_size = 4
+max_line_length = 88
+
+# Input files - don't modify
+[{input,sample*}]
+insert_final_newline = false
+trim_trailing_whitespace = false
