@@ -1,0 +1,304 @@
+# Advent of Code 2025 - Justfile (Zig)
+# Usage:
+#   just --list              - Show all available commands
+#   just install-toolchain   - Install Zig
+#   just run 1               - Build and run day 1 with input file
+#   just test 1              - Build and run day 1 with sample input
+#   just build 1             - Build day 1
+#   just new 5               - Create new day 5 solution
+#   just clean               - Clean all build artifacts
+
+YEAR := "2025"
+
+# Default - show available commands
+default:
+    @just --list
+
+# Build a specific day
+[group('build')]
+build day:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd {{day}}
+    echo "Building day {{day}}..."
+    zig build-exe main.zig -O ReleaseFast
+
+# Build a specific day (debug mode)
+[group('build')]
+build-debug day:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd {{day}}
+    echo "Building day {{day}} (debug)..."
+    zig build-exe main.zig
+
+# Build all days
+[group('build')]
+build-all:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Building all days..."
+    for day in */; do
+        if [ -f "$day/main.zig" ]; then
+            day_num=${day%/}
+            echo "Building day $day_num..."
+            cd "$day_num"
+            zig build-exe main.zig -O ReleaseFast
+            cd ..
+        fi
+    done
+
+# Build and run a specific day with input file
+[group('run')]
+run day:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    just build {{day}}
+    echo "Running day {{day}} with input..."
+    echo ""
+    ./{{day}}/main {{day}}/input
+
+# Build and run a specific day with sample input
+[group('test')]
+test day sample="sample":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    just build {{day}}
+    echo "Running day {{day}} with {{sample}}..."
+    echo ""
+    ./{{day}}/main {{day}}/{{sample}}
+
+# Run in debug mode
+[group('test')]
+test-debug day sample="sample":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    just build-debug {{day}}
+    echo "Running day {{day}} (debug) with {{sample}}..."
+    echo ""
+    ./{{day}}/main {{day}}/{{sample}}
+
+# Create a new day solution
+[group('setup')]
+new day:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    if [ -d "{{day}}" ]; then
+        echo "Error: Day {{day}} already exists!"
+        exit 1
+    fi
+
+    echo "Creating directory for day {{day}}..."
+    mkdir -p "{{day}}"
+
+    # Create main.zig template
+    cat > "{{day}}/main.zig" << 'EOF'
+const std = @import("std");
+
+fn parseInput(allocator: std.mem.Allocator, filename: []const u8) !std.ArrayList([]const u8) {
+    const file = try std.fs.cwd().openFile(filename, .{});
+    defer file.close();
+
+    var lines = std.ArrayList([]const u8).init(allocator);
+    var buf_reader = std.io.bufferedReader(file.reader());
+    var in_stream = buf_reader.reader();
+
+    var buf: [1024]u8 = undefined;
+    while (try in_stream.readUntilDelimiterOrEof(&buf, '\n')) |line| {
+        const line_copy = try allocator.dupe(u8, line);
+        try lines.append(line_copy);
+    }
+
+    return lines;
+}
+
+fn part1(lines: std.ArrayList([]const u8)) !i64 {
+    _ = lines;
+    // TODO: Implement part 1
+    return 0;
+}
+
+fn part2(lines: std.ArrayList([]const u8)) !i64 {
+    _ = lines;
+    // TODO: Implement part 2
+    return 0;
+}
+
+pub fn main() !void {
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+    const allocator = gpa.allocator();
+
+    const args = try std.process.argsAlloc(allocator);
+    defer std.process.argsFree(allocator, args);
+
+    if (args.len < 2) {
+        std.debug.print("Usage: {s} <input_file>\n", .{args[0]});
+        return error.MissingArgument;
+    }
+
+    const filename = args[1];
+    const lines = try parseInput(allocator, filename);
+    defer {
+        for (lines.items) |line| {
+            allocator.free(line);
+        }
+        lines.deinit();
+    }
+
+    const result1 = try part1(lines);
+    const result2 = try part2(lines);
+
+    const stdout = std.io.getStdOut().writer();
+    try stdout.print("Part 1: {d}\n", .{result1});
+    try stdout.print("Part 2: {d}\n", .{result2});
+}
+EOF
+
+    # Create empty input files
+    echo "Creating input files..."
+    touch "{{day}}/input"
+    touch "{{day}}/sample"
+
+    echo ""
+    echo "Successfully created day {{day}}!"
+    echo ""
+    echo "Next steps:"
+    echo "  1. Add your puzzle input to {{day}}/input"
+    echo "  2. Add sample input to {{day}}/sample"
+    echo "  3. Implement your solution in {{day}}/main.zig"
+    echo "  4. Test with: just test {{day}}"
+    echo "  5. Run with: just run {{day}}"
+
+# Clean build artifacts
+[group('clean')]
+clean:
+    #!/usr/bin/env bash
+    echo "Cleaning build artifacts..."
+    rm -f */main */main.o
+    find . -name "*.o" -type f -delete
+    echo "Clean complete!"
+
+# Format Zig code
+[group('format')]
+fmt day="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ -n "{{day}}" ]; then
+        echo "Formatting day {{day}}..."
+        zig fmt {{day}}/main.zig
+    else
+        echo "Formatting all Zig files..."
+        zig fmt .
+    fi
+
+# Check Zig code
+[group('check')]
+check day:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd {{day}}
+    echo "Checking day {{day}}..."
+    zig ast-check main.zig
+
+# Update Zig toolchain
+[group('update')]
+update-toolchain:
+    @echo "Checking for Zig updates..."
+    @echo "Current version:"
+    @zig version
+    @echo ""
+    @echo "Visit https://ziglang.org/download/ for the latest release"
+
+# Install Zig toolchain if not present
+[group('setup')]
+install-toolchain:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Checking Zig installation..."
+    echo ""
+
+    if command -v zig &> /dev/null; then
+        echo "✓ Zig already installed ($(zig version))"
+        exit 0
+    fi
+
+    echo "Installing Zig..."
+    echo ""
+
+    # Detect OS and architecture
+    OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+    ARCH=$(uname -m)
+
+    # Map architecture names
+    case $ARCH in
+        x86_64)
+            ARCH="x86_64"
+            ;;
+        aarch64|arm64)
+            ARCH="aarch64"
+            ;;
+        *)
+            echo "Error: Unsupported architecture: $ARCH"
+            exit 1
+            ;;
+    esac
+
+    # Zig version to install (latest as of template creation)
+    ZIG_VERSION="0.13.0"
+
+    # Construct download URL
+    case $OS in
+        darwin)
+            ZIG_ARCHIVE="zig-macos-${ARCH}-${ZIG_VERSION}.tar.xz"
+            ;;
+        linux)
+            ZIG_ARCHIVE="zig-linux-${ARCH}-${ZIG_VERSION}.tar.xz"
+            ;;
+        *)
+            echo "Error: Unsupported OS: $OS"
+            exit 1
+            ;;
+    esac
+
+    ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/${ZIG_ARCHIVE}"
+
+    echo "Downloading Zig ${ZIG_VERSION} for ${OS}-${ARCH}..."
+    curl -fLO "$ZIG_URL"
+
+    echo "Extracting..."
+    tar -xf "$ZIG_ARCHIVE"
+    rm "$ZIG_ARCHIVE"
+
+    # Move to standard location
+    INSTALL_DIR="$HOME/.local/zig"
+    mkdir -p "$HOME/.local"
+    rm -rf "$INSTALL_DIR"
+    mv "zig-${OS}-${ARCH}-${ZIG_VERSION}" "$INSTALL_DIR"
+
+    # Add to PATH
+    if [[ "$SHELL" == *"zsh"* ]]; then
+        SHELL_RC="$HOME/.zshrc"
+    else
+        SHELL_RC="$HOME/.bashrc"
+    fi
+
+    if ! grep -q "/.local/zig" "$SHELL_RC" 2>/dev/null; then
+        echo "" >> "$SHELL_RC"
+        echo "# Zig" >> "$SHELL_RC"
+        echo 'export PATH="$HOME/.local/zig:$PATH"' >> "$SHELL_RC"
+        echo "Added Zig to PATH in $SHELL_RC"
+    fi
+
+    export PATH="$HOME/.local/zig:$PATH"
+
+    echo ""
+    echo "Zig installation complete!"
+    echo ""
+    echo "Version: $(zig version)"
+    echo "Location: $INSTALL_DIR/zig"
+    echo ""
+    echo "To use Zig in this shell, run: export PATH=\"\$HOME/.local/zig:\$PATH\""
+    echo "Or restart your shell to load from $SHELL_RC"
