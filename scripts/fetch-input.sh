@@ -109,7 +109,7 @@ fetch_input() {
         "$url")
 
     local http_code=$(echo "$response" | tail -n1)
-    local content=$(echo "$response" | head -n-1)
+    local content=$(echo "$response" | head -n1)
 
     case $http_code in
         200)

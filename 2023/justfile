@@ -17,41 +17,73 @@ default:
 
 # Run a specific day with input file
 [group('run')]
-run day part="1" input="input":
+run day="" part="1" input="input":
     #!/usr/bin/env bash
     set -euo pipefail
-    cd {{day}}
-    echo "Running day {{day}} part {{part}} with {{input}}..."
-    cargo run --quiet -- {{part}} {{input}}
+    DAY="{{ day }}"
+    if [ -z "$DAY" ]; then
+        DAY=$(basename "{{ invocation_directory() }}")
+    fi
+    cd $DAY
+    echo "Running day $DAY part {{ part }} with {{ input }}..."
+    cargo run --quiet -- {{ part }} {{ input }}
 
 # Run a specific day with sample input
 [group('test')]
-test day part="1" sample="sample_1":
+sample day="" part="1" sample="sample_1":
     #!/usr/bin/env bash
     set -euo pipefail
-    cd {{day}}
-    echo "Running day {{day}} part {{part}} with {{sample}}..."
-    cargo run --quiet -- {{part}} {{sample}}
+    DAY="{{ day }}"
+    if [ -z "$DAY" ]; then
+        DAY=$(basename "{{ invocation_directory() }}")
+    fi
+    cd $DAY
+    echo "Running day $DAY part {{ part }} with {{ sample }}..."
+    cargo run --quiet -- {{ part }} {{ sample }}
 
 # Build a specific day
 [group('build')]
-build day:
-    cargo build --package aoc-{{YEAR}}-{{day}}
+build day="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    DAY="{{ day }}"
+    if [ -z "$DAY" ]; then
+        DAY=$(basename "{{ invocation_directory() }}")
+    fi
+    cargo build --package aoc-{{ YEAR }}-${DAY}
 
 # Build a specific day (release mode)
 [group('build')]
-build-release day:
-    cargo build --package aoc-{{YEAR}}-{{day}} --release
+build-release day="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    DAY="{{ day }}"
+    if [ -z "$DAY" ]; then
+        DAY=$(basename "{{ invocation_directory() }}")
+    fi
+    cargo build --package aoc-{{ YEAR }}-${DAY} --release
 
 # Run tests for a specific day
 [group('test')]
-test-unit day:
-    cargo nextest run --package aoc-{{YEAR}}-{{day}}
+test day="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    DAY="{{ day }}"
+    if [ -z "$DAY" ]; then
+        DAY=$(basename "{{ invocation_directory() }}")
+    fi
+    cargo nextest run --package aoc-{{ YEAR }}-${DAY}
 
 # Run clippy for a specific day
 [group('check')]
-check day:
-    cargo clippy --package aoc-{{YEAR}}-{{day}} -- -D warnings
+check day="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    DAY="{{ day }}"
+    if [ -z "$DAY" ]; then
+        DAY=$(basename "{{ invocation_directory() }}")
+    fi
+    cargo clippy --package aoc-{{ YEAR }}-${DAY} -- -D warnings
 
 # Create a new day solution
 [group('setup')]
@@ -59,15 +91,15 @@ new day:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    PKG_NAME="aoc-{{YEAR}}-{{day}}"
-    DAY_DIR="{{day}}"
+    PKG_NAME="aoc-{{ YEAR }}-{{ day }}"
+    DAY_DIR="{{ day }}"
 
     if [ -d "$DAY_DIR" ]; then
         echo "Error: Directory $DAY_DIR already exists"
         exit 1
     fi
 
-    echo "Creating new AOC {{YEAR}} day {{day}} package..."
+    echo "Creating new AOC {{ YEAR }} day {{ day }} package..."
 
     # Use cargo to create the package
     cargo new "$DAY_DIR" --name "$PKG_NAME" --vcs none
@@ -84,19 +116,19 @@ new day:
         for file in "$TEMPLATE_DIR"/*; do
             if [ -f "$file" ]; then
                 filename=$(basename "$file")
-                sed -e "s/<YEAR>/{{YEAR}}/g" -e "s/<DAY>/{{day}}/g" "$file" > "$DAY_DIR/src/$filename"
+                sed -e "s/<YEAR>/{{ YEAR }}/g" -e "s/<DAY>/{{ day }}/g" "$file" > "$DAY_DIR/src/$filename"
             fi
         done
     fi
 
     # Add to workspace
     CARGO_TOML="../Cargo.toml"
-    if ! grep -q "\"{{YEAR}}/$DAY_DIR\"" "$CARGO_TOML"; then
+    if ! grep -q "\"{{ YEAR }}/$DAY_DIR\"" "$CARGO_TOML"; then
         # Use a more robust sed approach
         if [[ "$OSTYPE" == "darwin"* ]]; then
-            sed -i '' "s/members = \[/members = [\"{{YEAR}}\/$DAY_DIR\", /" "$CARGO_TOML"
+            sed -i '' "s/members = \[/members = [\"{{ YEAR }}\/$DAY_DIR\", /" "$CARGO_TOML"
         else
-            sed -i "s/members = \[/members = [\"{{YEAR}}\/$DAY_DIR\", /" "$CARGO_TOML"
+            sed -i "s/members = \[/members = [\"{{ YEAR }}\/$DAY_DIR\", /" "$CARGO_TOML"
         fi
         echo "Added $PKG_NAME to workspace"
     fi
@@ -105,11 +137,11 @@ new day:
     echo "Successfully created $PKG_NAME at $DAY_DIR/"
     echo ""
     echo "Next steps:"
-    echo "  1. Add your puzzle input to {{day}}/input"
-    echo "  2. Add sample input to {{day}}/sample_1"
-    echo "  3. Implement your solution in {{day}}/src/main.rs"
-    echo "  4. Test with: just test {{day}}"
-    echo "  5. Run with: just run {{day}}"
+    echo "  1. Add your puzzle input to {{ day }}/input"
+    echo "  2. Add sample input to {{ day }}/sample_1"
+    echo "  3. Implement your solution in {{ day }}/src/main.rs"
+    echo "  4. Test with: just test {{ day }}"
+    echo "  5. Run with: just run {{ day }}"
 
 # Clean build artifacts
 [group('clean')]

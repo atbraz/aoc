@@ -4,13 +4,11 @@ Guide for starting Advent of Code solutions for a new year (e.g., 2025).
 
 ## Table of Contents
 
-1. [Quick Start](#quick-start)
-2. [Choosing a Language](#choosing-a-language)
-3. [Setup by Language](#setup-by-language)
-4. [Creating the Justfile](#creating-the-justfile)
-5. [Creating a README](#creating-a-readme)
-6. [Testing Your Setup](#testing-your-setup)
-7. [Optional: Common Library](#optional-common-library)
+1. [Setup by Language](#setup-by-language)
+2. [Creating the Justfile](#creating-the-justfile)
+3. [Creating a README](#creating-a-readme)
+4. [Testing Your Setup](#testing-your-setup)
+5. [Optional: Common Library](#optional-common-library)
 
 ## Quick Start
 
@@ -34,38 +32,6 @@ cp ../2023/README.md .
 # 5. Test with first day
 just new 1
 ```
-
-## Choosing a Language
-
-Consider these factors when choosing a language for the year:
-
-### Performance Focus
-- **C++**: Maximum performance, manual memory management
-- **Rust**: Performance + safety, excellent type system
-- **OCaml**: Decent performance, great for algorithms
-
-### Learning Goals
-- New language? Use AOC as a learning project
-- Mastering a language? Push its features
-- Exploring paradigms? Try functional (OCaml), systems (Rust), or object-oriented (C++)
-
-### Problem Fit
-- **Parsing heavy**: OCaml (pattern matching), Rust (parser combinators)
-- **Graph algorithms**: Any, but Rust's type system helps with complex state
-- **String manipulation**: OCaml (immutable), Rust (ownership), C++ (STL)
-- **Dynamic programming**: Any language works well
-
-### Previous Years
-- 2024: C++17
-- 2023: Rust
-- 2022: OCaml
-
-Ideas for 2025+:
-- **Go**: Simplicity, goroutines for parallelizable problems
-- **Haskell**: Pure functional, lazy evaluation
-- **Zig**: Modern C alternative
-- **Python**: Rapid prototyping, rich libraries
-- **Julia**: Scientific computing, performance
 
 ## Setup by Language
 
@@ -381,18 +347,3 @@ Then reference it in your day's build commands.
 - [ ] Update root workspace files if needed
 - [ ] Add year to root README.md
 
-## Tips
-
-1. **Start simple**: Don't over-engineer day 1
-2. **Extract gradually**: Move to common library when you use something 3+ times
-3. **Document as you go**: Update README when you discover quirks
-4. **Consistent structure**: Follow the pattern of previous years
-5. **Test early**: Make sure your setup works before day 1 releases
-
-## Questions?
-
-- Check previous year setups for reference
-- Read language-specific documentation
-- Test with a simple example before day 1
-
-Happy coding! 🎄

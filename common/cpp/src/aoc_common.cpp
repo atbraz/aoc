@@ -1,6 +1,4 @@
 #include "aoc_common.hpp"
-#include <sstream>
-#include <algorithm>
 #include <cctype>
 
 namespace aoc {
