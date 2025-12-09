@@ -34,6 +34,7 @@ count_solutions() {
     for day in {1..25}; do
         local solution_file=""
         case $year in
+            2025) solution_file="${year}/${day}/main.zig" ;;
             2024) solution_file="${year}/${day}/main.cpp" ;;
             2023) solution_file="${year}/${day}/src/main.rs" ;;
             2022) solution_file="${year}/${day}/main.ml" ;;
@@ -72,7 +73,7 @@ echo -e "${CYAN}Completion Status${NC}"
 echo -e "${GRAY}────────────────────────────────────────────────────${NC}"
 
 total_completed=0
-for year in 2022 2023 2024; do
+for year in 2022 2023 2024 2025; do
     if [ -d "$year" ]; then
         completed=$(count_solutions "$year")
         percent=$(calc_percent "$completed" 25)
@@ -84,8 +85,8 @@ for year in 2022 2023 2024; do
 done
 
 echo ""
-overall_percent=$(calc_percent "$total_completed" 75)
-printf "  ${YELLOW}Overall: %2d/75 stars (%.1f%%)${NC}\n" "$total_completed" "$overall_percent"
+overall_percent=$(calc_percent "$total_completed" 100)
+printf "  ${YELLOW}Overall: %2d/100 stars (%.1f%%)${NC}\n" "$total_completed" "$overall_percent"
 echo ""
 
 # Lines of Code Statistics
@@ -116,6 +117,17 @@ if [ -d "2023" ]; then
     echo ""
 fi
 
+# 2025 - Zig
+zig_total=0
+if [ -d "2025" ]; then
+    zig_solutions=$(count_loc "*.zig" "2025/*/")
+    zig_total=$zig_solutions
+    printf "  ${MAGENTA}Zig (2025)${NC}\n"
+    printf "    Solutions: %6d lines\n" "$zig_solutions"
+    printf "    Total:     ${GREEN}%6d lines${NC}\n" "$zig_total"
+    echo ""
+fi
+
 # 2024 - C++
 if [ -d "2024" ]; then
     cpp_solutions=$(count_loc "*.cpp" "2024/*/")
@@ -135,6 +147,7 @@ total_lines=0
 if [ -d "2022" ]; then total_lines=$((total_lines + ml_total)); fi
 if [ -d "2023" ]; then total_lines=$((total_lines + rs_total)); fi
 if [ -d "2024" ]; then total_lines=$((total_lines + cpp_total)); fi
+if [ -d "2025" ]; then total_lines=$((total_lines + zig_total)); fi
 
 printf "  ${YELLOW}All Languages: %6d lines${NC}\n" "$total_lines"
 echo ""
@@ -178,6 +191,15 @@ if [ "$total_lines" -gt 0 ]; then
         for i in $(seq 1 "$filled" 2>/dev/null || echo ""); do printf "█"; done
         printf "${NC}\n"
     fi
+
+    if [ -d "2025" ]; then
+        zig_percent=$(calc_percent "$zig_total" "$total_lines")
+        printf "  Zig:    %5.1f%%  " "$zig_percent"
+        filled=$(printf "%.0f" "$(echo "$zig_percent / 2" | bc -l)")
+        printf "${MAGENTA}"
+        for i in $(seq 1 "$filled" 2>/dev/null || echo ""); do printf "█"; done
+        printf "${NC}\n"
+    fi
 fi
 echo ""
 
@@ -189,6 +211,7 @@ solution_files=0
 if [ -d "2022" ]; then solution_files=$((solution_files + $(find 2022/*/ -name "*.ml" 2>/dev/null | wc -l))); fi
 if [ -d "2023" ]; then solution_files=$((solution_files + $(find 2023/*/src/ -name "*.rs" 2>/dev/null | wc -l))); fi
 if [ -d "2024" ]; then solution_files=$((solution_files + $(find 2024/*/ -name "*.cpp" 2>/dev/null | wc -l))); fi
+if [ -d "2025" ]; then solution_files=$((solution_files + $(find 2025/*/ -name "*.zig" 2>/dev/null | wc -l))); fi
 
 input_files=$(find 202*/*/input -type f 2>/dev/null | wc -l)
 sample_files=$(find 202*/*/sample* -type f 2>/dev/null | wc -l)

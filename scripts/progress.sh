@@ -29,6 +29,9 @@ check_day() {
     # Check for solution file based on year
     local solution_file=""
     case $year in
+        2025)
+            solution_file="${dir}/main.zig"
+            ;;
         2024)
             solution_file="${dir}/main.cpp"
             ;;
@@ -83,6 +86,7 @@ show_year() {
     # Determine language based on year
     local lang=""
     case $year in
+        2025) lang="Zig" ;;
         2024) lang="C++" ;;
         2023) lang="Rust" ;;
         2022) lang="OCaml" ;;
@@ -157,7 +161,7 @@ main() {
     else
         # Show all years
         echo ""
-        for year in 2022 2023 2024; do
+        for year in 2022 2023 2024 2025; do
             if [ -d "$year" ]; then
                 show_year "$year"
             fi
@@ -169,7 +173,7 @@ main() {
         echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
         local total=0
-        for year in 2022 2023 2024; do
+        for year in 2022 2023 2024 2025; do
             if [ -d "$year" ]; then
                 local stars=$(count_stars "$year")
                 total=$((total + stars))
@@ -177,7 +181,7 @@ main() {
             fi
         done
 
-        local max_stars=$((25 * 3))
+        local max_stars=$((25 * 4))
         local total_percent=$((total * 100 / max_stars))
         echo ""
         echo -e "  ${YELLOW}Total: ${total}/${max_stars} stars (${total_percent}%)${NC}"
