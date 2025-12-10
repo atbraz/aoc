@@ -19,8 +19,8 @@ CXX := if os() == "macos" {
 }
 
 # Auto-detect best C++ standard
-# Modern compilers (Clang 12+, GCC 11+, Apple Clang 14+) support C++20
-CXXSTD := if os() == "macos" { "c++20" } else { "c++17" }
+# Modern compilers (Clang 17+, GCC 13+, Apple Clang 17+) support C++23
+CXXSTD := if os() == "macos" { "c++23" } else { "c++17" }
 
 # Platform-specific optimization flags
 OPTFLAGS := if os() == "macos" {

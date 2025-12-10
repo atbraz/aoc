@@ -1,0 +1,4 @@
+CompileFlags:
+  Add:
+    - "-I/Users/antonio/Documents/dev/aoc/common/cpp/include"
+    - "-std=c++17"
