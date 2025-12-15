@@ -1,7 +1,7 @@
 # Day 4 - Justfile
 
-CXX := "g++"
-CXXFLAGS := "-std=c++17 -Wall -Wextra -O2"
+CXX := `command -v clang++ > /dev/null && echo clang++ || echo g++`
+CXXFLAGS := "-std=c++23 -Wall -Wextra -O2"
 DAY := "4"
 BINARY := "day_" + DAY
 
@@ -13,7 +13,7 @@ default:
 [group('build')]
 build:
     @echo -e "\033[0;32mCompiling day {{DAY}}...\033[0m"
-    {{CXX}} {{CXXFLAGS}} main.cpp -o {{BINARY}}
+    {{CXX}} {{CXXFLAGS}} main.cpp ../cpp_utils/parse_input.cpp -o {{BINARY}}
 
 # Run with input file
 [group('run')]

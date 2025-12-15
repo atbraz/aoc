@@ -1,7 +1,7 @@
 # Day 3 - Justfile
 
-CXX := "g++"
-CXXFLAGS := "-std=c++17 -Wall -Wextra -O2"
+CXX := `command -v clang++ > /dev/null && echo clang++ || echo g++`
+CXXFLAGS := "-std=c++23 -Wall -Wextra -O2"
 DAY := "3"
 BINARY := "day_" + DAY
 

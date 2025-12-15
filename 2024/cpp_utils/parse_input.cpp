@@ -1,13 +1,14 @@
 #include <fstream>
-#include <iostream>
+#include <print>
 #include <string>
+#include <string_view>
 #include <vector>
 
-std::vector<std::string> parse_input(std::string input_file) {
-    std::ifstream stream{input_file};
+std::vector<std::string> parse_input(std::string_view input_file) {
+    std::ifstream stream{std::string(input_file)};
 
     if (!stream) {
-        std::cerr << "Input file is not valid\n";
+        std::println(stderr, "Input file is not valid");
     }
 
     std::string line;

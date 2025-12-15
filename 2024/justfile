@@ -60,7 +60,8 @@ build day:
     #!/usr/bin/env bash
     set -euo pipefail
     echo -e "\033[0;32mCompiling day {{day}}...\033[0m"
-    {{CXX}} {{CXXFLAGS}} {{day}}/main.cpp -o {{day}}/day_{{day}}
+    mkdir -p build/{{day}}
+    {{CXX}} {{CXXFLAGS}} {{day}}/main.cpp -o build/{{day}}/main
 
 # Compile all days
 [group('build')]
@@ -69,7 +70,8 @@ build-all:
     set -euo pipefail
     for day in {{DAYS}}; do
         echo -e "\033[0;32mCompiling day $day...\033[0m"
-        {{CXX}} {{CXXFLAGS}} $day/main.cpp -o $day/day_$day
+        mkdir -p build/$day
+        {{CXX}} {{CXXFLAGS}} $day/main.cpp -o build/$day/main
     done
 
 # Compile and run a specific day with input file
@@ -80,7 +82,7 @@ run day:
     just build {{day}}
     echo -e "\033[0;32mRunning day {{day}} with input...\033[0m"
     echo ""
-    echo "{{day}}/input" | ./{{day}}/day_{{day}}
+    echo "{{day}}/input" | ./build/{{day}}/main
 
 # Compile and run a specific day with sample input
 [group('test')]
@@ -90,7 +92,7 @@ test day sample="sample_1":
     just build {{day}}
     echo -e "\033[0;32mRunning day {{day}} with {{sample}}...\033[0m"
     echo ""
-    echo "{{day}}/{{sample}}" | ./{{day}}/day_{{day}}
+    echo "{{day}}/{{sample}}" | ./build/{{day}}/main
 
 # Create a new day solution
 [group('setup')]
@@ -182,10 +184,10 @@ clean day="":
     set -euo pipefail
     if [ -n "{{day}}" ]; then
         echo -e "\033[0;33mCleaning day {{day}}...\033[0m"
-        rm -f {{day}}/day_{{day}}
+        rm -rf build/{{day}}
     else
         echo -e "\033[0;33mCleaning all compiled binaries...\033[0m"
-        rm -f */day_*
+        rm -rf build
     fi
 
 # Update C++ toolchain

@@ -1,14 +1,16 @@
 #include <fstream>
 #include <iostream>
+#include <print>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <vector>
 
-std::vector<std::vector<int>> parse_input(std::string input_file) {
-    std::ifstream stream{input_file};
+std::vector<std::vector<int>> parse_input(std::string_view input_file) {
+    std::ifstream stream{std::string(input_file)};
 
     if (!stream) {
-        std::cerr << "Input file is not valid\n";
+        std::println(stderr, "Input file is not valid");
     }
 
     std::string line;
@@ -26,26 +28,26 @@ std::vector<std::vector<int>> parse_input(std::string input_file) {
     return lines;
 }
 
-bool is_safe_sequence_1(std::vector<int> line) {
+bool is_safe_sequence_1(const std::vector<int>& line) {
     bool safe = true;
     int prev_diff = 0;
-    for (int i = 1; i < line.size(); i++) {
+    for (size_t i = 1; i < line.size(); i++) {
         int diff = (line[i] - line[i - 1]);
 
-        std::cout << line[i] << " - " << line[i - 1] << '\n';
+        std::println("{} - {}", line[i], line[i - 1]);
 
         if (diff == 0) {
-            std::cout << "0\n";
+            std::println("0");
             safe = false;
             break;
         }
         if ((diff * prev_diff) < 0) {
-            std::cout << "-\n";
+            std::println("-");
             safe = false;
             break;
         }
         if (abs(diff) > 3) {
-            std::cout << ">\n";
+            std::println(">");
             safe = false;
             break;
         }
@@ -54,14 +56,14 @@ bool is_safe_sequence_1(std::vector<int> line) {
     return safe;
 }
 
-bool is_safe_sequence_2(std::vector<int> line) {
+bool is_safe_sequence_2(const std::vector<int>& line) {
     if (is_safe_sequence_1(line)) return true;
 
-    for (int skip = 0; skip < line.size(); skip++){
+    for (size_t skip = 0; skip < line.size(); skip++){
         std::vector<int> test_sequence;
         test_sequence.reserve(line.size() - 1);
 
-        for (int i = 0; i < line.size(); i++){
+        for (size_t i = 0; i < line.size(); i++){
             if (i != skip) test_sequence.push_back(line[i]);
         }
 
@@ -71,27 +73,27 @@ bool is_safe_sequence_2(std::vector<int> line) {
     return false;
 }
 
-int solve_part_1(std::vector<std::vector<int>> lines) {
+int solve_part_1(const std::vector<std::vector<int>>& lines) {
     int count = 0;
-    for (std::vector<int> line : lines) {
+    for (const auto& line : lines) {
         if (is_safe_sequence_1(line)) {
             count++;
-            std::cout << "safe\n";
+            std::println("safe");
         } else {
-            std::cout << "not safe\n";
+            std::println("not safe");
         }
     }
     return count;
 }
 
-int solve_part_2(std::vector<std::vector<int>> lines) {
+int solve_part_2(const std::vector<std::vector<int>>& lines) {
     int count = 0;
-    for (std::vector<int> line : lines) {
+    for (const auto& line : lines) {
         if (is_safe_sequence_2(line)) {
             count++;
-            std::cout << "safe\n";
+            std::println("safe");
         } else {
-            std::cout << "not safe\n";
+            std::println("not safe");
         }
     }
     return count;
@@ -101,18 +103,18 @@ int main() {
     std::string input_file;
     std::cin >> input_file;
 
-    std::vector<std::vector<int>> lines = parse_input(input_file);
+    const auto lines = parse_input(input_file);
 
-    std::cout << " -------------------------\n";
-    std::cout << " ------SOLVE PART 1-------\n";
-    std::cout << " -------------------------\n";
-    int part_1 = solve_part_1(lines);
+    std::println(" -------------------------");
+    std::println(" ------SOLVE PART 1-------");
+    std::println(" -------------------------");
+    const int part_1 = solve_part_1(lines);
 
-    std::cout << " -------------------------\n";
-    std::cout << " ------SOLVE PART 2-------\n";
-    std::cout << " -------------------------\n";
-    int part_2 = solve_part_2(lines);
+    std::println(" -------------------------");
+    std::println(" ------SOLVE PART 2-------");
+    std::println(" -------------------------");
+    const int part_2 = solve_part_2(lines);
 
-    std::cout << part_1 << '\n';
-    std::cout << part_2 << '\n';
+    std::println("{}", part_1);
+    std::println("{}", part_2);
 }

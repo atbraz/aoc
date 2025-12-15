@@ -1,17 +1,18 @@
-
 #include <array>
 #include <cctype>
 #include <cstddef>
 #include <fstream>
 #include <iostream>
+#include <print>
 #include <string>
+#include <string_view>
 #include <vector>
 
-std::vector<std::string> parse_input(std::string input_file) {
-    std::ifstream stream{input_file};
+std::vector<std::string> parse_input(std::string_view input_file) {
+    std::ifstream stream{std::string(input_file)};
 
     if (!stream) {
-        std::cerr << "Input file is not valid\n";
+        std::println(stderr, "Input file is not valid");
     }
 
     std::string line;
@@ -31,7 +32,7 @@ std::string do_dont_pos(size_t do_pos, size_t dont_pos) {
     return "\t\t| do() @ " + do_str + "\t| don't() @ " + dont_str + "\n";
 }
 
-std::vector<std::array<int, 2>> parse_line(std::string line, bool apply_cond) {
+std::vector<std::array<int, 2>> parse_line(const std::string& line, bool apply_cond) {
     bool enabled = true;
     size_t curr_pos = 0;
     std::string mul_init = "mul(";
@@ -43,8 +44,7 @@ std::vector<std::array<int, 2>> parse_line(std::string line, bool apply_cond) {
         size_t init_pos = line.find(mul_init, curr_pos);
 
         if (init_pos == std::string::npos) {
-            std::cout
-                << "\n\t------------------End of Line------------------\n";
+            std::println("\n\t------------------End of Line------------------");
             break;
         } else {
             curr_pos = init_pos;
@@ -53,7 +53,7 @@ std::vector<std::array<int, 2>> parse_line(std::string line, bool apply_cond) {
         size_t do_pos = line.rfind("do()", curr_pos);
         size_t dont_pos = line.rfind("don't()", curr_pos);
 
-        std::cout << curr_pos << "\t| mul(";
+        std::print("{}\t| mul(", curr_pos);
         if (apply_cond) {
             size_t last_do = std::string::npos;
             size_t last_dont = std::string::npos;
@@ -74,7 +74,7 @@ std::vector<std::array<int, 2>> parse_line(std::string line, bool apply_cond) {
         }
 
         if (!enabled) {
-            std::cout << "\t\t--> Disabled\t" << do_dont_pos(do_pos, dont_pos);
+            std::print("\t\t--> Disabled\t{}", do_dont_pos(do_pos, dont_pos));
             curr_pos++;
             continue;
         };
@@ -85,28 +85,26 @@ std::vector<std::array<int, 2>> parse_line(std::string line, bool apply_cond) {
             char next_char = line.at(mul_init.length() + ++curr_pos - 1);
             if (!((isdigit(next_char)) | (next_char == ',') |
                   (next_char == ')'))) {
-                std::cout << next_char << "\t--> Broken\t"
-                          << do_dont_pos(do_pos, dont_pos);
+                std::print("{}\t--> Broken\t{}", next_char, do_dont_pos(do_pos, dont_pos));
                 break;
             };
 
             if (isdigit(next_char)) {
-                std::cout << next_char;
+                std::print("{}", next_char);
                 int next_digit = next_char - '0';
                 curr_number = (curr_number * 10) + (next_digit);
                 continue;
             }
 
             if (next_char == ',') {
-                std::cout << ',';
+                std::print(",");
                 mul[0] = curr_number;
                 curr_number = 0;
                 continue;
             }
 
             if (next_char == ')') {
-                std::cout << ")\t<-- pushing to vec"
-                          << do_dont_pos(do_pos, dont_pos);
+                std::print(")\t<-- pushing to vec{}", do_dont_pos(do_pos, dont_pos));
                 mul[1] = curr_number;
                 muls.push_back(mul);
                 break;
@@ -117,15 +115,14 @@ std::vector<std::array<int, 2>> parse_line(std::string line, bool apply_cond) {
     return muls;
 }
 
-std::vector<std::array<int, 2>> get_mul_vectors(std::vector<std::string> lines,
+std::vector<std::array<int, 2>> get_mul_vectors(const std::vector<std::string>& lines,
                                                 bool apply_cond = false) {
     std::vector<std::array<int, 2>> result;
 
-    for (std::string line : lines) {
-        std::cout << "\n\nParsing line\n\n" << line << "\n\n";
-        std::vector<std::array<int, 2>> parsed_line =
-            parse_line(line, apply_cond);
-        for (std::array<int, 2> arr : parsed_line) {
+    for (const auto& line : lines) {
+        std::println("\n\nParsing line\n\n{}\n", line);
+        const auto parsed_line = parse_line(line, apply_cond);
+        for (const auto& arr : parsed_line) {
             result.push_back(arr);
         }
     }
@@ -133,13 +130,13 @@ std::vector<std::array<int, 2>> get_mul_vectors(std::vector<std::string> lines,
     return result;
 }
 
-int mul_vector(std::vector<std::array<int, 2>> muls) {
+int mul_vector(const std::vector<std::array<int, 2>>& muls) {
     int result = 0;
-    std::cout << "\nMultiplications being summed:\n";
-    for (std::array<int, 2> mul : muls) {
+    std::println("\nMultiplications being summed:");
+    for (const auto& mul : muls) {
         result += (mul[0] * mul[1]);
-        std::cout << mul[0] << "\t*\t" << mul[1] << "\t=\t" << (mul[0] * mul[1])
-                  << "\t| Running total: " << result << "\n";
+        std::println("{}\t*\t{}\t=\t{}\t| Running total: {}",
+                     mul[0], mul[1], mul[0] * mul[1], result);
     }
     return result;
 }
@@ -148,18 +145,18 @@ int main() {
     std::string input_file;
     std::cin >> input_file;
 
-    std::vector<std::string> lines = parse_input(input_file);
+    const auto lines = parse_input(input_file);
 
-    std::cout << "\n\t-------------------------\n";
-    std::cout << "\t------SOLVE PART 1-------\n";
-    std::cout << "\t-------------------------\n";
-    int part_1 = mul_vector(get_mul_vectors(lines));
+    std::println("\n\t-------------------------");
+    std::println("\t------SOLVE PART 1-------");
+    std::println("\t-------------------------");
+    const int part_1 = mul_vector(get_mul_vectors(lines));
 
-    std::cout << "\n\t-------------------------\n";
-    std::cout << "\t------SOLVE PART 2-------\n";
-    std::cout << "\t-------------------------\n";
-    int part_2 = mul_vector(get_mul_vectors(lines, true));
+    std::println("\n\t-------------------------");
+    std::println("\t------SOLVE PART 2-------");
+    std::println("\t-------------------------");
+    const int part_2 = mul_vector(get_mul_vectors(lines, true));
 
-    std::cout << "\nPart 1: " << part_1 << '\n';
-    std::cout << "Part 2: " << part_2 << '\n';
+    std::println("\nPart 1: {}", part_1);
+    std::println("Part 2: {}", part_2);
 }

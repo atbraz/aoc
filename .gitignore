@@ -162,22 +162,25 @@ cython_debug/
 
 bin/
 
-# C++ compiled binaries
-day_*
+# C++ build artifacts
+build/
 *.exe
 
-# Zig compiled binaries
-*/main
-*.o
+# Zig build artifacts
 zig-cache/
 zig-out/
-
-# OCaml compiled binaries
-aoc-2022-*
-aoc-20??-*
+*/main
+*.o
 
 # Rust build artifacts
-/target
+target/
+Cargo.lock
 
 # OCaml build artifacts
 _build/
+*.cmi
+*.cmo
+*.cmx
+*.cma
+*.cmxa
+*.a

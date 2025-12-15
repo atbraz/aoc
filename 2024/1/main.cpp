@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <fstream>
 #include <iostream>
+#include <print>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -17,14 +18,14 @@ int solve_part_1(std::ifstream &stream) {
     }
 
     if (first_list.size() != second_list.size()) {
-        std::cerr << "Lists are not same size\n";
+        std::println(stderr, "Lists are not same size");
         return 1;
     }
     std::sort(first_list.begin(), first_list.end());
     std::sort(second_list.begin(), second_list.end());
 
     int cum_diff = 0;
-    for (int i = 0; i < first_list.size(); i++) {
+    for (size_t i = 0; i < first_list.size(); i++) {
         cum_diff += abs(first_list[i] - second_list[i]);
     }
     return cum_diff;
@@ -53,8 +54,8 @@ int solve_part_2(std::ifstream &stream) {
         }
     }
 
-    int cum_sum=0;
-    for (int i: first_list) {
+    int cum_sum = 0;
+    for (const auto i : first_list) {
         cum_sum += count[i] * i;
     }
 
@@ -67,14 +68,14 @@ int main() {
     std::ifstream stream{input_file};
 
     if (!stream) {
-        std::cerr << "Error\n";
+        std::println(stderr, "Error");
         return 1;
     }
 
-    std::cout << "Part 1: " << solve_part_1(stream) << '\n';
+    std::println("Part 1: {}", solve_part_1(stream));
     stream.clear();
     stream.seekg(0);
-    std::cout << "Part 2: " << solve_part_2(stream) << '\n';
+    std::println("Part 2: {}", solve_part_2(stream));
 
     return 0;
 }
