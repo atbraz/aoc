@@ -172,8 +172,12 @@ day_*
 zig-cache/
 zig-out/
 
-# Added by cargo
+# OCaml compiled binaries
+aoc-2022-*
+aoc-20??-*
 
+# Rust build artifacts
 /target
 
+# OCaml build artifacts
 _build/
