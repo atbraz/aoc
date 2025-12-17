@@ -1,9 +1,9 @@
 # Day 4 - Justfile
 
-CXX := `command -v clang++ > /dev/null && echo clang++ || echo g++`
+CXX := `[ -f /opt/homebrew/opt/llvm/bin/clang++ ] && echo /opt/homebrew/opt/llvm/bin/clang++ || (command -v clang++ > /dev/null && echo clang++ || echo g++)`
 CXXFLAGS := "-std=c++23 -Wall -Wextra -O2"
 DAY := "4"
-BINARY := "day_" + DAY
+BINARY := "build/main"
 
 # Default - show commands
 default:
@@ -13,6 +13,7 @@ default:
 [group('build')]
 build:
     @echo -e "\033[0;32mCompiling day {{DAY}}...\033[0m"
+    @mkdir -p build
     {{CXX}} {{CXXFLAGS}} main.cpp ../cpp_utils/parse_input.cpp -o {{BINARY}}
 
 # Run with input file
@@ -33,4 +34,4 @@ test sample="sample_1": build
 [group('clean')]
 clean:
     @echo -e "\033[0;33mCleaning day {{DAY}}...\033[0m"
-    @rm -f {{BINARY}}
+    @rm -rf build

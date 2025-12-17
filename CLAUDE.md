@@ -71,9 +71,9 @@ just build 8
 
 **2024 (C++):**
 - Standalone C++ files compiled with g++/clang++
-- C++17/C++20 standard depending on platform
-- Binaries: `<day>/day_<day>`
-- Input provided via stdin: `echo "<day>/input" | ./<day>/day_<day>`
+- C++17/C++23 standard depending on platform
+- Binaries: `build/<day>/main`
+- Input provided via stdin: `echo "<day>/input" | ./build/<day>/main`
 
 **2022 (OCaml):**
 - Dune build system

@@ -62,12 +62,15 @@ update-rust:
 install-toolchain year:
     @just {{year}}/install-toolchain
 
-# Install all toolchains (OCaml, Rust, C++)
+# Install all toolchains (Zig, C++, Rust, OCaml)
 [group('setup')]
 install-all-toolchains:
     #!/usr/bin/env bash
     set -euo pipefail
     echo "Installing all toolchains..."
+    echo ""
+    echo "=== Installing Zig toolchain (2025) ==="
+    just 2025/install-toolchain || true
     echo ""
     echo "=== Installing C++ toolchain (2024) ==="
     just 2024/install-toolchain || true
@@ -112,13 +115,21 @@ bench year day iterations="10":
     echo "Benchmarking {{year}} day {{day}} ({{iterations}} iterations)..."
 
     case {{year}} in
-        2024)
-            if [ ! -f "{{year}}/{{day}}/day_{{day}}" ]; then
+        2025)
+            if [ ! -f "{{year}}/{{day}}/main" ]; then
                 just build {{year}} {{day}}
             fi
             hyperfine --warmup 3 --runs {{iterations}} \
                 --export-markdown "{{year}}/{{day}}/benchmark.md" \
-                'echo "{{year}}/{{day}}/input" | {{year}}/{{day}}/day_{{day}}'
+                '{{year}}/{{day}}/main {{year}}/{{day}}/input'
+            ;;
+        2024)
+            if [ ! -f "{{year}}/build/{{day}}/main" ]; then
+                just build {{year}} {{day}}
+            fi
+            hyperfine --warmup 3 --runs {{iterations}} \
+                --export-markdown "{{year}}/{{day}}/benchmark.md" \
+                'echo "{{year}}/{{day}}/input" | {{year}}/build/{{day}}/main'
             ;;
         2023)
             hyperfine --warmup 3 --runs {{iterations}} \
@@ -153,13 +164,13 @@ bench-all:
     echo "Running comprehensive benchmarks..."
     echo ""
 
-    for year in 2022 2023 2024; do
+    for year in 2022 2023 2024 2025; do
         if [ -d "$year" ]; then
             echo "Benchmarking $year..."
             for day in "$year"/*/; do
                 if [ -d "$day" ]; then
                     day_num=$(basename "$day")
-                    if [ -f "$day/main.ml" ] || [ -f "$day/src/main.rs" ] || [ -f "$day/main.cpp" ]; then
+                    if [ -f "$day/main.ml" ] || [ -f "$day/src/main.rs" ] || [ -f "$day/main.cpp" ] || [ -f "$day/main.zig" ]; then
                         echo "  Day $day_num..."
                         just bench "$year" "$day_num" 5 2>/dev/null || echo "    Failed"
                     fi
