@@ -1,8 +1,8 @@
-# Day 1 - Justfile
+# Day 6 - Justfile
 
 CXX := `[ -f /opt/homebrew/opt/llvm/bin/clang++ ] && echo /opt/homebrew/opt/llvm/bin/clang++ || (command -v clang++ > /dev/null && echo clang++ || echo g++)`
 CXXFLAGS := "-std=c++23 -Wall -Wextra -O2"
-DAY := "1"
+DAY := "6"
 BINARY := "build/main"
 
 # Default - show commands

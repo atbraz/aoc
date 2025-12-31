@@ -4,14 +4,20 @@
 #   just install-toolchain   - Install C++ compiler (g++ or clang++)
 #   just build 1             - Compile day 1
 #   just run 1               - Compile and run day 1 with input file
-#   just test 1              - Compile and run day 1 with sample input
+#   just test 1              - Compile and run day 1 tests with assertions
+#   just run-sample 1        - Compile and run day 1 with sample input (no assertions)
 #   just new 5               - Create new day 5 solution
 #   just clean               - Remove all compiled binaries
 #   just clean 1             - Remove compiled binary for day 1
 
 # Auto-detect compiler based on platform
+# Prefer Homebrew-installed clang on macOS for better standards support
 CXX := if os() == "macos" {
-    "clang++"
+    if path_exists("/opt/homebrew/opt/llvm/bin/clang++") == "true" {
+        "/opt/homebrew/opt/llvm/bin/clang++"
+    } else {
+        "clang++"
+    }
 } else if `command -v g++ >/dev/null 2>&1 && echo 1 || echo 0` == "1" {
     "g++"
 } else {
@@ -34,7 +40,7 @@ OPTFLAGS := if os() == "macos" {
 }
 
 CXXFLAGS := "-std=" + CXXSTD + " -Wall -Wextra " + OPTFLAGS
-DAYS := "1 2 3 4"
+DAYS := "1 2 3 4 5"
 
 # Default - show available commands
 default:
@@ -61,7 +67,12 @@ build day:
     set -euo pipefail
     echo -e "\033[0;32mCompiling day {{day}}...\033[0m"
     mkdir -p build/{{day}}
-    {{CXX}} {{CXXFLAGS}} {{day}}/main.cpp -o build/{{day}}/main
+    # Check if solution.cpp exists (multi-file structure)
+    if [ -f "{{day}}/solution.cpp" ]; then
+        {{CXX}} {{CXXFLAGS}} -I{{day}} {{day}}/main.cpp {{day}}/solution.cpp -o build/{{day}}/main
+    else
+        {{CXX}} {{CXXFLAGS}} {{day}}/main.cpp -o build/{{day}}/main
+    fi
 
 # Compile all days
 [group('build')]
@@ -71,7 +82,11 @@ build-all:
     for day in {{DAYS}}; do
         echo -e "\033[0;32mCompiling day $day...\033[0m"
         mkdir -p build/$day
-        {{CXX}} {{CXXFLAGS}} $day/main.cpp -o build/$day/main
+        if [ -f "$day/solution.cpp" ]; then
+            {{CXX}} {{CXXFLAGS}} -I$day $day/main.cpp $day/solution.cpp -o build/$day/main
+        else
+            {{CXX}} {{CXXFLAGS}} $day/main.cpp -o build/$day/main
+        fi
     done
 
 # Compile and run a specific day with input file
@@ -84,9 +99,19 @@ run day:
     echo ""
     echo "{{day}}/input" | ./build/{{day}}/main
 
-# Compile and run a specific day with sample input
+# Compile and run tests with assertions
 [group('test')]
-test day sample="sample_1":
+test day:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    just build {{day}}
+    echo -e "\033[0;32mRunning tests for day {{day}}...\033[0m"
+    echo ""
+    ./build/{{day}}/main --test
+
+# Compile and run a specific day with sample input (without assertions)
+[group('run')]
+run-sample day sample="sample_1":
     #!/usr/bin/env bash
     set -euo pipefail
     just build {{day}}
@@ -108,14 +133,24 @@ new day:
     echo "Creating directory for day {{day}}..."
     mkdir -p "{{day}}"
 
-    # Create main.cpp template
-    cat > "{{day}}/main.cpp" << 'EOF'
+    # Create solution.h header
+    cat > "{{day}}/solution.h" << 'EOF'
+    #pragma once
+    #include <string>
+
+    int solve_part_1(const std::string& input_file);
+    int solve_part_2(const std::string& input_file);
+    EOF
+
+    # Create solution.cpp implementation
+    cat > "{{day}}/solution.cpp" << 'EOF'
+    #include "solution.h"
     #include <fstream>
     #include <iostream>
     #include <string>
     #include <vector>
 
-    std::vector<std::string> parse_input(std::string input_file) {
+    std::vector<std::string> parse_input(const std::string& input_file) {
         std::ifstream stream{input_file};
 
         if (!stream) {
@@ -132,24 +167,52 @@ new day:
         return lines;
     }
 
-    int solve_part_1(const std::vector<std::string>& lines) {
+    int solve_part_1(const std::string& input_file) {
+        const auto lines = parse_input(input_file);
         // TODO: Implement part 1 solution
         return 0;
     }
 
-    int solve_part_2(const std::vector<std::string>& lines) {
+    int solve_part_2(const std::string& input_file) {
+        const auto lines = parse_input(input_file);
         // TODO: Implement part 2 solution
         return 0;
     }
+    EOF
 
-    int main() {
+    # Create main.cpp template
+    cat > "{{day}}/main.cpp" << 'EOF'
+    #include "solution.h"
+    #include <cassert>
+    #include <iostream>
+    #include <print>
+    #include <string>
+
+    int main(int argc, char* argv[]) {
+        bool test_mode = (argc > 1 && std::string(argv[1]) == "--test");
+
+        if (test_mode) {
+            // TODO: Update expected values after solving with sample input
+            std::println("Running tests...\n");
+
+            int result_1 = solve_part_1("{{day}}/sample_1");
+            assert(result_1 == 0 && "Part 1 failed");
+            std::println("✓ Part 1: {}", result_1);
+
+            int result_2 = solve_part_2("{{day}}/sample_1");
+            assert(result_2 == 0 && "Part 2 failed");
+            std::println("✓ Part 2: {}", result_2);
+
+            std::println("\n✓ All tests passed!");
+            return 0;
+        }
+
+        // Normal execution
         std::string input_file;
         std::cin >> input_file;
 
-        std::vector<std::string> lines = parse_input(input_file);
-
-        std::cout << "Part 1: " << solve_part_1(lines) << '\n';
-        std::cout << "Part 2: " << solve_part_2(lines) << '\n';
+        std::println("Part 1: {}", solve_part_1(input_file));
+        std::println("Part 2: {}", solve_part_2(input_file));
 
         return 0;
     }
@@ -173,9 +236,10 @@ new day:
     echo "Next steps:"
     echo "  1. Add your puzzle input to {{day}}/input"
     echo "  2. Add sample input to {{day}}/sample_1"
-    echo "  3. Implement your solution in {{day}}/main.cpp"
-    echo "  4. Test with: just test {{day}}"
-    echo "  5. Run with: just run {{day}}"
+    echo "  3. Implement your solution in {{day}}/solution.cpp"
+    echo "  4. Update expected test values in {{day}}/main.cpp (search for TODO)"
+    echo "  5. Run tests: just test {{day}}"
+    echo "  6. Run with input: just run {{day}}"
 
 # Clean all compiled binaries
 [group('clean')]
