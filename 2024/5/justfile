@@ -1,0 +1,37 @@
+# Day 5 - Justfile
+
+CXX := `[ -f /opt/homebrew/opt/llvm/bin/clang++ ] && echo /opt/homebrew/opt/llvm/bin/clang++ || (command -v clang++ > /dev/null && echo clang++ || echo g++)`
+CXXFLAGS := "-std=c++23 -Wall -Wextra -O2"
+DAY := "5"
+BINARY := "build/main"
+
+# Default - show commands
+default:
+    @just --list
+
+# Compile the solution
+[group('build')]
+build:
+    @echo -e "\033[0;32mCompiling day {{DAY}}...\033[0m"
+    @mkdir -p build
+    {{CXX}} {{CXXFLAGS}} main.cpp solution.cpp -o {{BINARY}}
+
+# Run with input file
+[group('run')]
+run: build
+    @echo -e "\033[0;32mRunning day {{DAY}} with input...\033[0m"
+    @echo ""
+    @echo "input" | ./{{BINARY}}
+
+# Run with sample file
+[group('test')]
+test sample="sample_1": build
+    @echo -e "\033[0;32mRunning day {{DAY}} with {{sample}}...\033[0m"
+    @echo ""
+    @./{{BINARY}} --test
+
+# Clean compiled binary
+[group('clean')]
+clean:
+    @echo -e "\033[0;33mCleaning day {{DAY}}...\033[0m"
+    @rm -rf build
