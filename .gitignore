@@ -184,3 +184,6 @@ _build/
 *.cma
 *.cmxa
 *.a
+
+# mac
+.DS_Store
