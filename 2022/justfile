@@ -69,47 +69,14 @@ new day:
     echo "Creating directory for day {{day}}..."
     mkdir -p "{{day}}"
 
-    # Create dune file
-    echo "Creating dune file..."
-    printf '%s\n' \
-      '(executable' \
-      ' (name main)' \
-      ' (public_name aoc-{{YEAR + "-" + day}})' \
-      ' (package aoc-{{YEAR}})' \
-      ' (libraries aoc-common-ocaml))' \
-      > "{{day}}/dune"
+    # Copy template files
+    TEMPLATE_DIR="./template"
 
-    # Create main.ml template
-    echo "Creating main.ml..."
-    printf '%s\n' \
-      'open Aoc_common_ocaml' \
-      '' \
-      'let parse_input filename =' \
-      '  let lines = In_channel.with_open_text filename In_channel.input_lines in' \
-      '  lines' \
-      '' \
-      'let part1 lines =' \
-      '  (* TODO: Implement part 1 *)' \
-      '  ignore lines;' \
-      '  0' \
-      '' \
-      'let part2 lines =' \
-      '  (* TODO: Implement part 2 *)' \
-      '  ignore lines;' \
-      '  0' \
-      '' \
-      'let () =' \
-      '  if Array.length Sys.argv < 2 then (' \
-      '    Printf.eprintf "Usage: %s <input_file>\n" Sys.argv.(0);' \
-      '    exit 1' \
-      '  );' \
-      '' \
-      '  let filename = Sys.argv.(1) in' \
-      '  let lines = parse_input filename in' \
-      '' \
-      '  Printf.printf "Part 1: %d\n" (part1 lines);' \
-      '  Printf.printf "Part 2: %d\n" (part2 lines)' \
-      > "{{day}}/main.ml"
+    # Copy dune file and replace placeholders
+    sed -e "s/<YEAR>/{{YEAR}}/g" -e "s/<DAY>/{{day}}/g" "$TEMPLATE_DIR/dune" > "{{day}}/dune"
+
+    # Copy main.ml directly (no placeholders)
+    cp "$TEMPLATE_DIR/main.ml" "{{day}}/main.ml"
 
     # Create empty input files
     echo "Creating input files..."
