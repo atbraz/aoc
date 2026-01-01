@@ -32,30 +32,10 @@ new year day:
 clean year day="":
     @just {{year}}/clean {{day}}
 
-# Run all tests in workspace (Rust years)
-[group('test')]
-test-all:
-    cargo nextest run --workspace
-
-# Build all Rust packages
-[group('build')]
-build-all:
-    cargo build --workspace --release
-
-# Check Rust code
-[group('build')]
-check:
-    cargo clippy --workspace -- -D warnings
-
 # Update dependencies for a specific year
 [group('update')]
 update year:
     @just {{year}}/update
-
-# Update Rust toolchain
-[group('update')]
-update-rust:
-    @just 2023/update-toolchain
 
 # Install toolchain for a specific year
 [group('setup')]
