@@ -74,9 +74,9 @@ cargo run -- <part> <input_file>
 ## Intricacies
 
 - **Cargo Workspace**: All days are in a single workspace, sharing dependencies
-- **Common Library**: Uses `aoc-common-rust` for shared utilities
+- **Common Library**: Uses `common` for shared utilities
 - **Flexible Testing**: Can specify different sample files per part
   - `just test 8 2 sample_2` runs part 2 with alternate sample
-- **Template System**: The `new` command copies from `../common/rust/template/`
+- **Template System**: The `new` command copies from `./template/`
 - **Auto Workspace Add**: New days are automatically added to root `Cargo.toml`
 - **Quiet Runs**: Uses `--quiet` flag to reduce cargo output noise

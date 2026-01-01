@@ -62,9 +62,9 @@ Each year has its own README with detailed setup and workflow:
 
 Shared utilities to reduce boilerplate across solutions:
 
-- **[common/rust](common/rust/README.md)** - CLI parsing, input handling, colored output
-- **[common/ocaml](common/ocaml/README.md)** - File I/O helpers
-- **common/cpp** - Coming soon
+- **[2023/common](2023/common/README.md)** - Rust: CLI parsing, input handling, colored output
+- **[2022/common](2022/common/README.md)** - OCaml: File I/O helpers
+- **[2024/common](2024/common/README.md)** - C++: Common utilities
 
 ## Project Commands
 

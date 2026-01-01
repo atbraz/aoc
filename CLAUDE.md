@@ -67,7 +67,7 @@ just build 8
 - Cargo workspace with each day as a separate package
 - Packages named: `aoc-2023-<day>`
 - Use `cargo nextest run` for testing
-- Solutions use common library at `common/rust`
+- Solutions use common library at `2023/common`
 
 **2024 (C++):**
 - Standalone C++ files compiled with g++/clang++
@@ -93,22 +93,23 @@ just build 8
 aoc/
 ├── 2025/          # Zig solutions (day-by-day directories)
 ├── 2024/          # C++ solutions (day-by-day directories)
+│   └── common/    # C++ common utilities (include/ and src/)
 ├── 2023/          # Rust solutions (Cargo workspace)
+│   └── common/    # aoc-common-rust library
 ├── 2022/          # OCaml solutions (Dune workspace)
+│   └── common/    # aoc-common-ocaml library
 ├── common/        # Shared utilities per language
-│   ├── rust/      # aoc-common-rust library
-│   ├── cpp/       # C++ common utilities (include/ and src/)
-│   └── ocaml/     # aoc-common-ocaml library
+│   └── zig/       # Zig common utilities
 ├── scripts/       # Meta-project utilities (fetch, progress, stats)
 ├── justfile       # Root task runner (delegates to year justfiles)
-└── Cargo.toml     # Rust workspace config (2023 + common/rust)
+└── Cargo.toml     # Rust workspace config (2023/common + days)
 ```
 
 ### Common Library Pattern
 
-Each language has a common library in `common/<language>/` to reduce boilerplate:
+Each language has a common library within its year directory to reduce boilerplate:
 
-**Rust (`common/rust`):**
+**Rust (`2023/common`):**
 - `cli` module: Automatic CLI parsing, part selection, result formatting
 - `input` module: Read as lines, grids, paragraphs, single string
 - `errors` module: `AocError` and `InputError` with automatic conversions
@@ -116,12 +117,12 @@ Each language has a common library in `common/<language>/` to reduce boilerplate
 - Solutions import with: `use aoc_common_rust::{cli, input::InputReader, errors::AocError};`
 - Main function pattern: `cli::run(part1, part2)` where each part takes `filename: &str`
 
-**C++ (`common/cpp`):**
+**C++ (`2024/common`):**
 - Header: `include/aoc_common.hpp`
 - Implementation: `src/aoc_common.cpp`
 - Utilities for reading lines and common operations
 
-**OCaml (`common/ocaml`):**
+**OCaml (`2022/common`):**
 - Library: `aoc-common-ocaml`
 - File I/O helpers and parsing utilities
 
@@ -205,9 +206,11 @@ When running `just new <year> <day>`:
 5. For OCaml: creates `dune` build file
 6. Prints next steps for implementation
 
-Templates are either:
-- Inline in the justfile (C++, OCaml, Zig)
-- In `common/rust/template/src/` (Rust)
+Templates are stored in each year's directory:
+- `2022/template/` - OCaml templates (dune, main.ml)
+- `2023/template/src/` - Rust templates (main.rs, lib.rs, part_1.rs, part_2.rs, utils.rs)
+- `2024/template/` - C++ templates (solution.h, solution.cpp, main.cpp)
+- `2025/template/` - Zig templates (main.zig)
 
 ## Important Development Notes
 
@@ -215,7 +218,7 @@ Templates are either:
 
 When creating a new Rust day, the package must be added to `Cargo.toml`:
 ```toml
-members = ["common/rust", "2023/3", "2023/4", ..., "2023/<new-day>"]
+members = ["2023/common", "2023/3", "2023/4", ..., "2023/<new-day>"]
 ```
 
 The `just new` command does this automatically, but manual additions should follow the pattern.
