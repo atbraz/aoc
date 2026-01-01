@@ -96,7 +96,7 @@ echo -e "${GRAY}─────────────────────�
 # 2022 - OCaml
 if [ -d "2022" ]; then
     ml_solutions=$(count_loc "*.ml" "2022/*/")
-    ml_common=$(count_loc "*.ml" "common/ocaml/")
+    ml_common=$(count_loc "*.ml" "2022/common/")
     ml_total=$((ml_solutions + ml_common))
     printf "  ${MAGENTA}OCaml (2022)${NC}\n"
     printf "    Solutions: %6d lines\n" "$ml_solutions"
@@ -108,7 +108,7 @@ fi
 # 2023 - Rust
 if [ -d "2023" ]; then
     rs_solutions=$(count_loc "*.rs" "2023/*/src/")
-    rs_common=$(count_loc "*.rs" "common/rust/src/")
+    rs_common=$(count_loc "*.rs" "2023/common/src/")
     rs_total=$((rs_solutions + rs_common))
     printf "  ${MAGENTA}Rust (2023)${NC}\n"
     printf "    Solutions: %6d lines\n" "$rs_solutions"
