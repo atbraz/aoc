@@ -1,0 +1,15 @@
+opam-version: "2.0"
+name: "aoc-common-ocaml"
+version: "1.0.0"
+synopsis: "Common utilities for Advent of Code solutions"
+maintainer: "Antonio Braz <antonio@torreaobraz.com>"
+authors: "Antonio Braz <antonio@torreaobraz.com>"
+license: "MIT"
+homepage: "https://github.com/atbraz/aoc"
+depends: [
+  "ocaml" {>= "5.3.0"}
+  "dune" {>= "3.17.0"}
+]
+build: [
+  ["dune" "build" "-p" name "-j" jobs]
+]
