@@ -297,44 +297,6 @@ let read_file filename =
 EOF
 ```
 
-### C++ Common Library
-
-```bash
-mkdir -p common/cpp/include
-mkdir -p common/cpp/src
-
-# Create header
-cat > common/cpp/include/aoc_common.hpp << 'EOF'
-#pragma once
-#include <string>
-#include <vector>
-
-namespace aoc {
-    std::vector<std::string> read_lines(const std::string& filename);
-}
-EOF
-
-# Create implementation
-cat > common/cpp/src/aoc_common.cpp << 'EOF'
-#include "aoc_common.hpp"
-#include <fstream>
-
-namespace aoc {
-    std::vector<std::string> read_lines(const std::string& filename) {
-        std::ifstream file(filename);
-        std::vector<std::string> lines;
-        std::string line;
-        while (std::getline(file, line)) {
-            lines.push_back(line);
-        }
-        return lines;
-    }
-}
-EOF
-```
-
-Then reference it in your day's build commands.
-
 ## Checklist
 
 - [ ] Create year directory
