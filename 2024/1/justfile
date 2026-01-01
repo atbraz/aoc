@@ -1,7 +1,24 @@
 # Day 1 - Justfile
 
-CXX := `[ -f /opt/homebrew/opt/llvm/bin/clang++ ] && echo /opt/homebrew/opt/llvm/bin/clang++ || (command -v clang++ > /dev/null && echo clang++ || echo g++)`
-CXXFLAGS := "-std=c++23 -Wall -Wextra -O2"
+CXX := ```
+    [ -f /opt/homebrew/opt/llvm/bin/clang++ ]
+    && echo /opt/homebrew/opt/llvm/bin/clang++
+    || (
+        command -v clang++ > /dev/null
+        && echo clang++
+        || echo g++
+    )
+```
+CXXFLAGS := """
+    -std=c++23
+    -O2
+    -Wall
+    -Wextra
+    -Weffc++
+    -Wconversion
+    -Wsign-conversion
+    -pedantic-errors
+"""
 DAY := "1"
 BINARY := "build/main"
 
@@ -12,26 +29,34 @@ default:
 # Compile the solution
 [group('build')]
 build:
-    @echo -e "\033[0;32mCompiling day {{DAY}}...\033[0m"
+    @echo -e """ \033[0;32m
+    Compiling day {{ DAY }}...
+    \033[0m"""
     @mkdir -p build
-    {{CXX}} {{CXXFLAGS}} main.cpp -o {{BINARY}}
+    {{ CXX }} {{ CXXFLAGS }} main.cpp -o {{ BINARY }}
 
 # Run with input file
 [group('run')]
 run: build
-    @echo -e "\033[0;32mRunning day {{DAY}} with input...\033[0m"
+    @echo -e """\033[0;32m
+    Running day {{ DAY }} with input...
+    \033[0m"""
     @echo ""
-    @echo "input" | ./{{BINARY}}
+    @echo "input" | ./{{ BINARY }}
 
 # Run with sample file
 [group('test')]
 test sample="sample_1": build
-    @echo -e "\033[0;32mRunning day {{DAY}} with {{sample}}...\033[0m"
+    @echo -e """\033[0;32m
+    Running day {{ DAY }} with {{ sample }}...
+    \033[0m"""
     @echo ""
-    @echo "{{sample}}" | ./{{BINARY}}
+    @echo "{{ sample }}" | ./{{ BINARY }}
 
 # Clean compiled binary
 [group('clean')]
 clean:
-    @echo -e "\033[0;33mCleaning day {{DAY}}...\033[0m"
+    @echo -e """\033[0;33m
+    Cleaning day {{ DAY }}...
+    \033[0m"""
     @rm -rf build
