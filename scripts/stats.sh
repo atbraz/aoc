@@ -130,14 +130,8 @@ fi
 
 # 2024 - C++
 if [ -d "2024" ]; then
-    cpp_solutions=$(count_loc "*.cpp" "2024/*/")
-    cpp_common_src=$(count_loc "*.cpp" "common/cpp/src/")
-    cpp_common_hdr=$(count_loc "*.hpp" "common/cpp/include/")
-    cpp_common=$((cpp_common_src + cpp_common_hdr))
-    cpp_total=$((cpp_solutions + cpp_common))
+    cpp_total=$(count_loc "*.cpp" "2024/*/")
     printf "  ${MAGENTA}C++ (2024)${NC}\n"
-    printf "    Solutions: %6d lines\n" "$cpp_solutions"
-    printf "    Common:    %6d lines\n" "$cpp_common"
     printf "    Total:     ${GREEN}%6d lines${NC}\n" "$cpp_total"
     echo ""
 fi
