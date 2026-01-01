@@ -1,4 +1,4 @@
-#include "../cpp_utils/parse_input.h"
+#include "../common/parse_input.h"
 #include <array>
 #include <iostream>
 #include <print>

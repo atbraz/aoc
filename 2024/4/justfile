@@ -14,7 +14,7 @@ default:
 build:
     @echo -e "\033[0;32mCompiling day {{DAY}}...\033[0m"
     @mkdir -p build
-    {{CXX}} {{CXXFLAGS}} main.cpp ../cpp_utils/parse_input.cpp -o {{BINARY}}
+    {{CXX}} {{CXXFLAGS}} main.cpp ../common/parse_input.cpp -o {{BINARY}}
 
 # Run with input file
 [group('run')]

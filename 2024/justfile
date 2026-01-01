@@ -67,11 +67,18 @@ build day:
     set -euo pipefail
     echo -e "\033[0;32mCompiling day {{day}}...\033[0m"
     mkdir -p build/{{day}}
+
+    # Detect if day uses common library
+    COMMON_FILES=""
+    if grep -q "#include.*common/" "{{day}}/main.cpp" 2>/dev/null || grep -q "#include.*common/" "{{day}}/solution.cpp" 2>/dev/null; then
+        COMMON_FILES="common/parse_input.cpp"
+    fi
+
     # Check if solution.cpp exists (multi-file structure)
     if [ -f "{{day}}/solution.cpp" ]; then
-        {{CXX}} {{CXXFLAGS}} -I{{day}} {{day}}/main.cpp {{day}}/solution.cpp -o build/{{day}}/main
+        {{CXX}} {{CXXFLAGS}} -I{{day}} {{day}}/main.cpp {{day}}/solution.cpp $COMMON_FILES -o build/{{day}}/main
     else
-        {{CXX}} {{CXXFLAGS}} {{day}}/main.cpp -o build/{{day}}/main
+        {{CXX}} {{CXXFLAGS}} {{day}}/main.cpp $COMMON_FILES -o build/{{day}}/main
     fi
 
 # Compile all days
@@ -82,10 +89,17 @@ build-all:
     for day in {{DAYS}}; do
         echo -e "\033[0;32mCompiling day $day...\033[0m"
         mkdir -p build/$day
+
+        # Detect if day uses common library
+        COMMON_FILES=""
+        if grep -q "#include.*common/" "$day/main.cpp" 2>/dev/null || grep -q "#include.*common/" "$day/solution.cpp" 2>/dev/null; then
+            COMMON_FILES="common/parse_input.cpp"
+        fi
+
         if [ -f "$day/solution.cpp" ]; then
-            {{CXX}} {{CXXFLAGS}} -I$day $day/main.cpp $day/solution.cpp -o build/$day/main
+            {{CXX}} {{CXXFLAGS}} -I$day $day/main.cpp $day/solution.cpp $COMMON_FILES -o build/$day/main
         else
-            {{CXX}} {{CXXFLAGS}} $day/main.cpp -o build/$day/main
+            {{CXX}} {{CXXFLAGS}} $day/main.cpp $COMMON_FILES -o build/$day/main
         fi
     done
 
