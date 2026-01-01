@@ -1,5 +1,5 @@
 use crate::utils::{self, get_time_distances, get_winners};
-use aoc_common_rust::errors::AocError;
+use common::errors::AocError;
 
 pub fn solve(filename: &str) -> Result<u32, AocError> {
     let (times, distances) = utils::parse_input(&filename)?;

@@ -1,4 +1,4 @@
-use aoc_common_rust::color::Color;
+use common::color::Color;
 
 #[derive(Debug, Clone)]
 pub struct Number {

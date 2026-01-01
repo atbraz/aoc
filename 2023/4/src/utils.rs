@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use aoc_common_rust::errors::AocError;
+use common::errors::AocError;
 
 #[must_use]
 pub(crate) fn parse_numbers(input: &str) -> Vec<u8> {

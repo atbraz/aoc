@@ -1,5 +1,5 @@
 use aoc_2023_3::{part_1, part_2};
-use aoc_common_rust::{color::Color, input::InputError};
+use common::{color::Color, input::InputError};
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();

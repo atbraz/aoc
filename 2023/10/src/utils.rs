@@ -1,5 +1,5 @@
-use aoc_common_rust::errors::AocError;
-use aoc_common_rust::input::InputReader;
+use common::errors::AocError;
+use common::input::InputReader;
 
 #[derive(Clone, Copy, Debug)]
 #[repr(u8)]

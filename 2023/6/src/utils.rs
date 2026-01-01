@@ -1,4 +1,4 @@
-use aoc_common_rust::{errors::AocError, input::InputReader};
+use common::{errors::AocError, input::InputReader};
 
 pub fn parse_input(filename: &str) -> Result<(Vec<u32>, Vec<u32>), AocError> {
     let lines = InputReader::as_lines(&filename)?;

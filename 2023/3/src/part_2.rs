@@ -1,5 +1,5 @@
 use crate::utils::{find_all_adjacent_numbers, Symbol};
-use aoc_common_rust::{
+use common::{
     color::Color,
     input::{InputError, InputReader},
 };

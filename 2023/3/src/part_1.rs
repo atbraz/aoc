@@ -1,7 +1,7 @@
 use crate::utils::{
     has_adjacent_symbol, print_colored_grid, print_grid_section, read_numbers, Number,
 };
-use aoc_common_rust::{
+use common::{
     color::Color,
     input::{InputError, InputReader},
 };

@@ -1,4 +1,4 @@
-use aoc_common_rust::errors::AocError;
+use common::errors::AocError;
 
 use crate::utils;
 

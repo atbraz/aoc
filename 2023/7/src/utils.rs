@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use aoc_common_rust::{errors::AocError, input::InputReader};
+use common::{errors::AocError, input::InputReader};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]

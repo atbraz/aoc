@@ -1,6 +1,6 @@
 use crate::utils::parse_numbers;
-use aoc_common_rust::errors::AocError;
-use aoc_common_rust::input::InputReader;
+use common::errors::AocError;
+use common::input::InputReader;
 
 pub fn solve(filename: &str) -> Result<u32, AocError> {
     let lines = InputReader::as_lines(filename)?;

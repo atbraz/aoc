@@ -1,5 +1,5 @@
 use crate::utils;
-use aoc_common_rust::errors::AocError;
+use common::errors::AocError;
 
 pub fn solve(filename: &str) -> Result<u32, AocError> {
     let hands = utils::get_hands(filename, false).unwrap();

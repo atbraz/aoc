@@ -1,6 +1,6 @@
 use crate::utils::Card;
-use aoc_common_rust::errors::AocError;
-use aoc_common_rust::input::InputReader;
+use common::errors::AocError;
+use common::input::InputReader;
 use std::str::FromStr;
 
 pub fn solve(filename: &str) -> Result<u32, AocError> {

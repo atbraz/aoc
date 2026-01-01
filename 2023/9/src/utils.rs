@@ -1,4 +1,4 @@
-use aoc_common_rust::{errors::AocError, input::InputReader};
+use common::{errors::AocError, input::InputReader};
 
 pub(crate) fn parse_input(filename: &str) -> Result<Vec<Vec<i64>>, AocError> {
     let lines: Vec<Vec<i64>> = InputReader::as_lines(filename)?

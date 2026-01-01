@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use aoc_common_rust::{errors::AocError, input::InputReader};
+use common::{errors::AocError, input::InputReader};
 
 pub(crate) fn parse_input(
     filename: &str,

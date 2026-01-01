@@ -1,4 +1,4 @@
-use aoc_common_rust::{errors::AocError, input::InputReader};
+use common::{errors::AocError, input::InputReader};
 
 pub struct RangeMapping {
     pub dest_start: u64,
