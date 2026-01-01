@@ -106,11 +106,11 @@ new day:
 
     # Add dependency using cargo
     cd "$DAY_DIR"
-    cargo add aoc-common-rust --path ../../common/rust
+    cargo add common --path ../common
     cd ..
 
     # Copy all template files, replacing placeholders
-    TEMPLATE_DIR="../common/rust/template/src"
+    TEMPLATE_DIR="./template/src"
 
     if [ -d "$TEMPLATE_DIR" ]; then
         for file in "$TEMPLATE_DIR"/*; do
@@ -122,13 +122,13 @@ new day:
     fi
 
     # Add to workspace
-    CARGO_TOML="../Cargo.toml"
-    if ! grep -q "\"{{ YEAR }}/$DAY_DIR\"" "$CARGO_TOML"; then
+    CARGO_TOML="./Cargo.toml"
+    if ! grep -q "\"$DAY_DIR\"" "$CARGO_TOML"; then
         # Use a more robust sed approach
         if [[ "$OSTYPE" == "darwin"* ]]; then
-            sed -i '' "s/members = \[/members = [\"{{ YEAR }}\/$DAY_DIR\", /" "$CARGO_TOML"
+            sed -i '' "s/members = \[/members = [\"$DAY_DIR\", /" "$CARGO_TOML"
         else
-            sed -i "s/members = \[/members = [\"{{ YEAR }}\/$DAY_DIR\", /" "$CARGO_TOML"
+            sed -i "s/members = \[/members = [\"$DAY_DIR\", /" "$CARGO_TOML"
         fi
         echo "Added $PKG_NAME to workspace"
     fi
