@@ -1,0 +1,5 @@
+(executable
+ (name main)
+ (public_name aoc-<YEAR>-<DAY>)
+ (package aoc-<YEAR>)
+ (libraries aoc-common-ocaml))
