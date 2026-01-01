@@ -93,7 +93,7 @@ just build 8
 aoc/
 ├── 2025/          # Zig solutions (day-by-day directories)
 ├── 2024/          # C++ solutions (day-by-day directories)
-│   └── common/    # C++ common utilities (include/ and src/)
+│   └── common/    # C++ common utilities (parse_input)
 ├── 2023/          # Rust solutions (Cargo workspace)
 │   └── common/    # aoc-common-rust library
 ├── 2022/          # OCaml solutions (Dune workspace)
@@ -107,7 +107,7 @@ aoc/
 
 ### Common Library Pattern
 
-Each language has a common library within its year directory to reduce boilerplate:
+Some languages have a common library within their year directory to reduce boilerplate:
 
 **Rust (`2023/common`):**
 - `cli` module: Automatic CLI parsing, part selection, result formatting
@@ -117,14 +117,13 @@ Each language has a common library within its year directory to reduce boilerpla
 - Solutions import with: `use aoc_common_rust::{cli, input::InputReader, errors::AocError};`
 - Main function pattern: `cli::run(part1, part2)` where each part takes `filename: &str`
 
-**C++ (`2024/common`):**
-- Header: `include/aoc_common.hpp`
-- Implementation: `src/aoc_common.cpp`
-- Utilities for reading lines and common operations
-
 **OCaml (`2022/common`):**
 - Library: `aoc-common-ocaml`
 - File I/O helpers and parsing utilities
+
+**C++ (`2024/common`):**
+- Minimal utilities: `parse_input.h/cpp` for basic input parsing
+- Most solutions implement utilities inline as needed
 
 ### Solution Structure Pattern
 
