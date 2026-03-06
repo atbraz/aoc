@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
         std::println("Running tests...\n");
 
         int result_1 = solve_part_1("6/sample_1");
-        assert(result_1 == 0 && "Part 1 failed");
+        assert(result_1 == 41 && "Part 1 failed");
         std::println("✓ Part 1: {}", result_1);
 
         int result_2 = solve_part_2("6/sample_1");

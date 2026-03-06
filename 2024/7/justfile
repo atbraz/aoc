@@ -1,4 +1,4 @@
-# Day 6 - Justfile
+# Day 7 - Justfile
 
 CXX := `[ -f /opt/homebrew/opt/llvm/bin/clang++ ]\
     && echo /opt/homebrew/opt/llvm/bin/clang++\
@@ -6,7 +6,7 @@ CXX := `[ -f /opt/homebrew/opt/llvm/bin/clang++ ]\
         command -v clang++ > /dev/null\
         && echo clang++\
         || echo g++\
-    )\`
+    )`
 CXXFLAGS := "\
     -std=c++23\
     -O2\
@@ -17,7 +17,7 @@ CXXFLAGS := "\
     -Wsign-conversion\
     -pedantic-errors\
 "
-DAY := "6"
+DAY := "7"
 BINARY := "build/main"
 
 # Default - show commands
@@ -49,7 +49,7 @@ test sample="sample_1": build
     Running day {{ DAY }} with {{ sample }}...\
     \033[0m"""
     @echo ""
-    @./{{ BINARY }} --test
+    @echo "{{ sample }}" | ./{{ BINARY }}
 
 # Clean compiled binary
 [group('clean')]

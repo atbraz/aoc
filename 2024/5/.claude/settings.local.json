@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(just build:*)",
+      "Bash(just test:*)",
+      "Bash(just new:*)"
+    ]
+  },
+  "enabledPlugins": {
+    "clangd-lsp@claude-plugins-official": true
+  }
+}

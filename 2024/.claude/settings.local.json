@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(make help:*)",
+      "Bash(make test:*)",
+      "Bash(./new-day.sh)",
+      "Bash(./new-day.sh:*)",
+      "Bash(./run.sh)",
+      "Bash(./run.sh:*)",
+      "Bash(just info:*)",
+      "Bash(just clean:*)",
+      "Bash(just build:*)",
+      "Bash(just:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(cat:*)",
+      "Bash(tree:*)",
+      "Bash(find ../common -type d -name template -exec sh -c 'echo \"\"{}:\"\" && ls -1 {}' ;)",
+      "Bash(find 2022 2024 2025 -type d -name template -exec sh -c 'echo \"\"{}:\"\" && ls -1 {}' ;)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

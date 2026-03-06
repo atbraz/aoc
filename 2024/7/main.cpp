@@ -11,12 +11,12 @@ int main(int argc, char* argv[]) {
         // TODO: Update expected values after solving with sample input
         std::println("Running tests...\n");
 
-        int result_1 = solve_part_1("sample_1");
-        assert(result_1 == 143 && "Part 1 failed");
+        long result_1 = solve_part_1("7/sample_1");
+        assert(result_1 == 3749 && "Part 1 failed");
         std::println("✓ Part 1: {}", result_1);
 
-        int result_2 = solve_part_2("sample_1");
-        assert(result_2 == 123 && "Part 2 failed");
+        long result_2 = solve_part_2("7/sample_1");
+        assert(result_2 == 0 && "Part 2 failed");
         std::println("✓ Part 2: {}", result_2);
 
         std::println("\n✓ All tests passed!");

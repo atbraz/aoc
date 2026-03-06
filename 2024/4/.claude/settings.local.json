@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/antonio/Documents/dev/aoc/2024/cpp_utils/**)",
+      "Bash(just build:*)",
+      "Bash(just test:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
