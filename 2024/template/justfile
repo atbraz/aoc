@@ -1,25 +1,11 @@
 # Day 1 - Justfile
 
-CXX := `\
-    [ -f /opt/homebrew/opt/llvm/bin/clang++ ]  \
-    && echo /opt/homebrew/opt/llvm/bin/clang++ \
-    || (                                       \
-        command -v clang++ > /dev/null         \
-        && echo clang++                        \
-        || echo g++                            \
-    )`
-CXXFLAGS := "\
-    -std=c++23\
-    -O2\
-    -Wall\
-    -Wextra\
-    -Weffc++\
-    -Wconversion\
-    -Wsign-conversion\
-    -pedantic-errors\
-"
+CXX := `[ -f /opt/homebrew/opt/llvm/bin/clang++ ] && echo /opt/homebrew/opt/llvm/bin/clang++ || (command -v clang++ > /dev/null && echo clang++ || echo g++)`
+CXXFLAGS := "-std=c++23 -O2 -Wall -Wextra -Weffc++ -Wconversion -Wsign-conversion -pedantic-errors"
+TESTFLAGS := "-std=c++23 -g -DTEST -Wall -Wextra -Weffc++ -Wconversion -Wsign-conversion -pedantic-errors"
 DAY := "1"
 BINARY := "build/main"
+TEST_BINARY := "build/test"
 
 # Default - show commands
 default:
@@ -32,7 +18,16 @@ build:
     Compiling day {{ DAY }}...\
     \033[0m"""
     @mkdir -p build
-    {{ CXX }} {{ CXXFLAGS }} main.cpp -o {{ BINARY }}
+    {{ CXX }} {{ CXXFLAGS }} main.cpp solution.cpp -o {{ BINARY }}
+
+# Compile in test mode
+[group('build')]
+build-test:
+    @echo -e """\033[0;32m\
+    Compiling day {{ DAY }} (test mode)...\
+    \033[0m"""
+    @mkdir -p build
+    {{ CXX }} {{ TESTFLAGS }} main.cpp solution.cpp -o {{ TEST_BINARY }}
 
 # Run with input file
 [group('run')]
@@ -44,13 +39,22 @@ run: build
     @echo "input" | ./{{ BINARY }}
 
 # Run with sample file
-[group('test')]
-test sample="sample_1": build
+[group('run')]
+run-sample sample="sample_1": build
     @echo -e """\033[0;32m\
     Running day {{ DAY }} with {{ sample }}...\
     \033[0m"""
     @echo ""
     @echo "{{ sample }}" | ./{{ BINARY }}
+
+# Run tests (compiled with -DTEST, uses hardcoded assertions)
+[group('test')]
+test: build-test
+    @echo -e """\033[0;32m\
+    Testing day {{ DAY }}...\
+    \033[0m"""
+    @echo ""
+    ./{{ TEST_BINARY }} --test
 
 # Clean compiled binary
 [group('clean')]
