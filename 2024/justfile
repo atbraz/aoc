@@ -162,9 +162,9 @@ new day:
     touch "{{day}}/input"
     touch "{{day}}/sample_1"
 
-    # Create a simple justfile by copying from day 1 template
-    if [ -f "1/justfile" ]; then
-        cp "1/justfile" "{{day}}/justfile"
+    # Create justfile from template
+    if [ -f "$TEMPLATE_DIR/justfile" ]; then
+        cp "$TEMPLATE_DIR/justfile" "{{day}}/justfile"
         perl '-pi' '-e' "s/DAY := \"1\"/DAY := \"{{day}}\"/g" "{{day}}/justfile"
         perl '-pi' '-e' "s/# Day 1/# Day {{day}}/g" "{{day}}/justfile"
     fi
